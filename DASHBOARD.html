@@ -1,0 +1,2912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice & Warranty Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 80px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Auto-hide menu bar on scroll */
+        .menu-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .menu-bar.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toast.success { border-left-color: #4CAF50; }
+        .toast.error { border-left-color: #f44336; }
+        .toast.warning { border-left-color: #ff9800; }
+        .toast.info { border-left-color: #2196F3; }
+
+        .toast-content {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .quick-actions-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #667eea;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .quick-actions-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+        }
+
+        .quick-actions-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px;
+            display: none;
+            min-width: 200px;
+        }
+
+        .quick-actions-menu.show {
+            display: block;
+        }
+
+        .quick-action-item {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .quick-action-item:hover {
+            background: #f5f5f5;
+        }
+
+        .quick-action-item i {
+            margin-right: 8px;
+        }
+
+        /* Auto-save Indicator */
+        .auto-save-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .auto-save-indicator.saving {
+            background: #ff9800;
+        }
+
+        .auto-save-indicator.saved {
+            background: #4CAF50;
+        }
+
+        /* Enhanced Form Validation */
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #f44336;
+            box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.1);
+        }
+
+        .form-group.success input,
+        .form-group.success select,
+        .form-group.success textarea {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+
+        .field-error {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .field-error {
+            display: block;
+        }
+
+        /* Keyboard Shortcuts Help */
+        .keyboard-shortcuts {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 16px;
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .keyboard-shortcuts.show {
+            display: block;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .shortcut-key {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .status-indicator.error {
+            background: #f44336;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .invoice-list {
+            margin-top: 20px;
+        }
+
+        .invoice-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .invoice-item-info {
+            flex: 1;
+        }
+
+        .invoice-number {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .invoice-meta {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .invoice-amount {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 16px;
+            margin-right: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .badge-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .form-row-full {
+            margin-top: 20px;
+        }
+
+        .mini-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .line-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .line-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-remove {
+            background: #f44336;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .summary-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .receipt-print {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .qr-code img {
+            max-width: 150px;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Selector & Settings Widget -->
+        <div class="menu-bar" id="menu-bar">
+            <select id="uiLanguage" onchange="changeUILanguage(this.value)" style="padding: 10px 15px; border-radius: 8px; border: 2px solid #667eea; background: white; color: #333; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                <option value="en">EN</option>
+                <option value="km">KH</option>
+            </select>
+            <button onclick="openTemplatePreview()" style="padding: 10px 15px; border-radius: 8px; border: 2px solid #667eea; background: white; color: #333; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.3s ease;" onmouseover="this.style.background='#667eea'; this.style.color='white';" onmouseout="this.style.background='white'; this.style.color='#333';">
+                👁️ Preview
+            </button>
+            <button onclick="openSettings()" style="padding: 10px 15px; border-radius: 8px; border: 2px solid #667eea; background: white; color: #333; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.3s ease;" onmouseover="this.style.background='#667eea'; this.style.color='white';" onmouseout="this.style.background='white'; this.style.color='#333';">
+                ⚙️ Settings
+            </button>
+        </div>
+
+        <!-- UX Enhancement Elements -->
+        <div class="toast-container" id="toast-container"></div>
+        <div class="auto-save-indicator" id="auto-save-indicator">💾 Auto-saving...</div>
+
+        <div class="quick-actions">
+            <div class="quick-actions-menu" id="quick-actions-menu">
+                <button class="quick-action-item" onclick="quickAddProduct()">
+                    <i>📦</i> Quick Add Product
+                </button>
+                <button class="quick-action-item" onclick="quickCreateInvoice()">
+                    <i>📄</i> Quick Invoice
+                </button>
+                <button class="quick-action-item" onclick="showKeyboardShortcuts()">
+                    <i>⌨️</i> Keyboard Shortcuts
+                </button>
+                <button class="quick-action-item" onclick="exportData()">
+                    <i>📊</i> Export Data
+                </button>
+            </div>
+            <button class="quick-actions-btn" onclick="toggleQuickActions()" title="Quick Actions">
+                ⚡
+            </button>
+        </div>
+
+        <div class="keyboard-shortcuts" id="keyboard-shortcuts">
+            <h4 style="margin-bottom: 12px; color: #333;">⌨️ Keyboard Shortcuts</h4>
+            <div class="shortcut-item">
+                <span>Save Invoice</span>
+                <span class="shortcut-key">Ctrl + S</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Add Line Item</span>
+                <span class="shortcut-key">Ctrl + Enter</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Search Products</span>
+                <span class="shortcut-key">Ctrl + F</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Switch Tabs</span>
+                <span class="shortcut-key">1-6</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Toggle Language</span>
+                <span class="shortcut-key">Ctrl + L</span>
+            </div>
+            <button onclick="hideKeyboardShortcuts()" style="margin-top: 12px; width: 100%; padding: 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1 data-en="💳 Invoice & Warranty Management System" data-km="💳 ប្រព័ន្ធគ្រប់គ្រងវិក័យប័ត្រ និងការធានា"></h1>
+            <p data-en="Unified platform for handling sales, invoices, and warranty management" data-km="ឧបករណ៍រួមបញ្ចូលសម្រាប់គ្រប់គ្រងការលក់, វិក័យប័ត្រ និងការធានាផលិតផល"></p>
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-indicator" id="api-status"></div>
+                    <span data-en="Backend API" data-km="API ខាងក្រោយ"></span>
+                </div>
+                <div class="status-item">
+                    <span id="invoice-count">0</span>
+                    <span data-en="Invoices" data-km="វិក័យប័ត្រ"></span>
+                </div>
+                <div class="status-item">
+                    <span id="total-revenue">$0.00</span>
+                    <span data-en="Total Revenue" data-km="សរុបប្រាក់ចំណូល"></span>
+                </div>
+            </div>
+            <!-- Company Info Display -->
+            <div id="company-info-display" style="background: #f0f7ff; padding: 12px 15px; border-radius: 5px; margin-top: 15px; border-left: 4px solid #667eea; font-size: 13px; color: #555; display: none;">
+                <!-- Populated by displayCompanyInfo() -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-grid">
+            <!-- Invoice Creation Card -->
+            <div class="card">
+                <h2 data-en="📋 Create Invoice" data-km="📋 បង្កើតវិក័យប័ត្រ"></h2>
+                <div id="invoice-alerts"></div>
+
+                <div class="form-group">
+                    <label data-en="Customer Name *" data-km="ឈ្មោះអតិថិជន *"></label>
+                    <input type="text" id="customerName" placeholder="John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Email *" data-km="អ៉ីមែល *"></label>
+                    <input type="email" id="customerEmail" placeholder="john@example.com">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-en="Phone" data-km="ទូរស័ព្ទ"></label>
+                        <input type="tel" id="customerPhone" placeholder="+1-555-0100">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="City" data-km="ក្រុង"></label>
+                        <input type="text" id="customerCity" placeholder="San Francisco">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Country" data-km="ประเทศ"></label>
+                    <input type="text" id="customerCountry" placeholder="United States">
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 15px;" data-en="📦 Line Items (Products)" data-km="📦 ឯកសារលម្អិត (ផលិតផល)"></h3>
+                <div id="items-container" style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                    <!-- Items will be added here -->
+                </div>
+                <button class="btn-secondary" onclick="addLineItem()" style="width: 100%; margin-bottom: 15px;">
+                    <span data-en="➕ Add Another Product" data-km="➕ បន្ថែមផលិតផលផ្សេងទៀត"></span>
+                </button>
+
+                <div class="form-group">
+                    <label data-en="Currency" data-km="រូបិយប័ណ្ណ"></label>
+                    <select id="currency">
+                        <option value="USD">USD (US Dollar)</option>
+                        <option value="EUR">EUR (Euro)</option>
+                        <option value="GBP">GBP (British Pound)</option>
+                        <option value="JPY">JPY (Japanese Yen)</option>
+                        <option value="CAD">CAD (Canadian Dollar)</option>
+                        <option value="KHR">KHR (Cambodian Riel)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Language" data-km="ភាសា"></label>
+                    <select id="language">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="km">Khmer (ខ្មែរ)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-en="Tax Amount ($)" data-km="ចំនួនពន្ធ ($)"></label>
+                        <input type="number" id="taxAmount" placeholder="0.00" value="0" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Tax Percentage (%)" data-km="ភាគរយពន្ធ (%)"></label>
+                        <input type="number" id="taxPercentage" placeholder="0" value="0" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span data-en="Subtotal:" data-km="សរុបលម្អិត:"></span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span data-en="Tax (10%):" data-km="ពន្ធ (១០%):"></span>
+                        <span id="tax">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span data-en="Total:" data-km="សរុប:"></span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="createInvoice()" style="width: 100%; margin-top: 15px;">
+                    <span data-en="✓ Create & Issue Invoice" data-km="✓ បង្កើត និងចេញលិខិតវិក័យប័ត្រ"></span>
+                </button>
+            </div>
+
+            <!-- Invoice List & Actions Card -->
+            <div class="card">
+                <h2 data-en="📊 Dashboard" data-km="📊 ផ្ទាំងគ្រប់គ្រង"></h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label" data-en="Total Invoices" data-km="សរុបវិក័យប័ត្រ"></div>
+                        <div class="stat-value" id="stat-invoices">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label" data-en="Total Revenue" data-km="សរុបប្រាក់ចំណូល"></div>
+                        <div class="stat-value" id="stat-revenue">$0</div>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('invoices')"><span data-en="📄 Invoices" data-km="📄 វិក័យប័ត្រ"></span></button>
+                    <button class="tab" onclick="switchTab('payments')"><span data-en="💰 Payments" data-km="💰 ការបង់ប្រាក់"></span></button>
+                    <button class="tab" onclick="switchTab('receipts')"><span data-en="🧾 Receipts" data-km="🧾 ឯកសារទទួល"></span></button>
+                    <button class="tab" onclick="switchTab('warranty')"><span data-en="🔍 Warranty Lookup" data-km="🔍 ស្វាគមន៍ការធានា"></span></button>
+                    <button class="tab" onclick="switchTab('products')"><span data-en="🔎 Product Search" data-km="🔎 ស្វាគមន៍ផលិតផល"></span></button>
+                    <button class="tab" onclick="switchTab('manage-products')"><span data-en="📦 Manage Products" data-km="📦 គ្រប់គ្រងផលិតផល"></span></button>
+                </div>
+
+                <div id="invoices-tab" class="tab-content active">
+                    <div class="invoice-list" id="invoice-list">
+                        <p style="color: #999; text-align: center; padding: 20px;" data-en="No invoices yet. Create one to get started!" data-km="មិនមានវិក័យប័ត្របឋមទេ។ បង្កើតលេខមួយដើម្បីចាប់ផ្តើម!"></p>
+                    </div>
+                    <button class="btn-secondary" onclick="loadInvoices()" style="width: 100%; margin-top: 10px;">
+                        <span data-en="🔄 Refresh List" data-km="🔄 ឱ្យសម្រាក់បញ្ជីឡើងវិញ"></span>
+                    </button>
+                </div>
+
+                <div id="payments-tab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                        <p style="color: #999; margin-bottom: 15px;" data-en="💳 Record payment for invoices with Cambodia payment methods" data-km="💳 ថតថ្លៃសម្រាប់វិក័យប័ត្របង្ហាញក្រុមហ៊ុនខ្មែរ"></p>
+                        <div class="form-row" style="margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label data-en="Select Invoice" data-km="ជ្រើសរើសវិក័យប័ត្រ"></label>
+                                <select id="paymentInvoice">
+                                    <option data-en="-- Select Invoice --" data-km="-- ជ្រើសរើសវិក័យប័ត្រ --"></option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label data-en="Payment Amount" data-km="ចំនួនបង់ប្រាក់"></label>
+                                <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label data-en="Payment Type" data-km="ប្រភេទការបង់ប្រាក់"></label>
+                                <select id="paymentType" onchange="updatePaymentMethodForm()">
+                                    <option value="cash" data-en="💵 Cash" data-km="💵 លុយសម្ភារៈ"></option>
+                                    <option value="bank" data-en="🏦 Bank Transfer" data-km="🏦 ផ្ទេរប្រាក់ធនាគារ"></option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- CASH Payment Form -->
+                        <div id="cashPaymentForm" style="display: none; background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #e0e0e0;">
+                            <h4 style="margin-bottom: 10px;" data-en="Cash Payment Details" data-km="ម៉ាតិកលម្អិតលុយសម្ភារៈ"></h4>
+                            <div class="form-row">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Currency" data-km="រូបិយប័ណ្ណ"></label>
+                                    <select id="cashCurrency">
+                                        <option value="KHR">💷 KHR (Cambodian Riel)</option>
+                                        <option value="USD">💵 USD (US Dollar)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Notes (Optional)" data-km="ចម្លើយ (ស្ម័គ្រចិត្ត)"></label>
+                                    <input type="text" id="cashNotes" placeholder="e.g., Received by John">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- BANK Payment Form -->
+                        <div id="bankPaymentForm" style="display: block; background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #e0e0e0;">
+                            <h4 style="margin-bottom: 10px;" data-en="Bank Transfer Details" data-km="លម្អិតលម្អិតផ្ទេរប្រាក់ធនាគារ"></h4>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label data-en="Bank / Payment Method" data-km="ធនាគារ / វិធីសាស្ត្របង់ប្រាក់"></label>
+                                <select id="bankMethod" onchange="updateBankDetails()">
+                                    <option value="" data-en="-- Select Bank --" data-km="-- ជ្រើសរើសធនាគារ --"></option>
+                                    <option value="khqr">🇰🇭 KHQR (Bakong)</option>
+                                    <option value="aba">🏛️ ABA Bank</option>
+                                    <option value="acleda">🏛️ ACLEDA Bank</option>
+                                    <option value="other" data-en="🏦 Other Bank" data-km="🏦 ធនាគារផ្សេងទៀត"></option>
+                                </select>
+                            </div>
+                            
+                            <div id="bankDetailsDisplay" style="background: #f0f8ff; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: none;">
+                                <p id="bankAccountInfo" style="color: #333; margin: 5px 0;"></p>
+                            </div>
+                            
+                            <div class="form-row" style="margin-bottom: 10px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Transaction Reference / Slip Number" data-km="សេចក្តីឯកសារយោង / លេខលក្ខណ៌"></label>
+                                    <input type="text" id="bankTransactionId" placeholder="e.g., TXN123456 or Deposit Slip #">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-success" onclick="recordPayment()" style="width: 100%; margin-top: 15px; padding: 12px; font-size: 16px;">
+                            <span data-en="✅ Record Payment" data-km="✅ ថតថ្លៃលម្អិត"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="receipts-tab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; text-align: center;">
+                        <p style="color: #999; margin-bottom: 15px;" data-en="Generate receipt from paid invoices" data-km="បង្កើតឯកសារទទួលពីវិក័យប័ត្របង់រួច"></p>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label data-en="Select Invoice" data-km="ជ្រើសរើសវិក័យប័ត្រ"></label>
+                            <select id="receiptInvoice">
+                                <option data-en="-- Select Invoice --" data-km="-- ជ្រើសរើសវិក័យប័ត្រ --"></option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label data-en="Format" data-km="ទម្រង់"></label>
+                                <select id="receiptFormat">
+                                    <option value="pdf">PDF</option>
+                                    <option value="thermal" data-en="Thermal Printer" data-km="ម៉ាស៊ីនpark Thermal"></option>
+                                    <option value="email">Email</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label data-en="Email/Phone" data-km="អ៉ីមែល/ទូរស័ព្ទ"></label>
+                                <input type="text" id="receiptDestination" placeholder="customer@example.com">
+                            </div>
+                        </div>
+                        <button class="btn-success" onclick="generateReceipt()" style="width: 100%; margin-top: 15px;">
+                            <span data-en="🧾 Generate Receipt" data-km="🧾 បង្កើតឯកសារទទួល"></span>
+                        </button>
+                    </div>
+                    <div id="receipt-preview"></div>
+                </div>
+
+                <div id="warranty-tab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                        <p style="color: #999; margin-bottom: 15px;" data-en="Search products by serial number to check warranty status" data-km="ស្វាគម្នមផលិតផលដោយលេខលម្អិតដើម្បីពិនិត្យមើលស្ថានភាពការធានា"></p>
+                        <div id="warranty-alerts"></div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label data-en="Serial Number *" data-km="លេខលម្អិត *"></label>
+                            <input type="text" id="searchSerialNumber" placeholder="e.g., SN-2026-001-ABC" onkeypress="if(event.key === 'Enter') searchWarrantyBySerial()">
+                        </div>
+                        <button class="btn-success" onclick="searchWarrantyBySerial()" style="width: 100%; margin-bottom: 15px;">
+                            <span data-en="🔍 Search Warranty" data-km="🔍 ស្វាគមន៍ការធានា"></span>
+                        </button>
+                        <div id="warranty-result" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div id="products-tab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                        <p style="color: #999; margin-bottom: 15px;" data-en="Search your product catalog by name, model, or manufacturer" data-km="ស្វាគម្នមផលិតផលក្នុងបញ្ជីផលិតផលរបស់អ្នកដោយឈ្មោះ, ម៉ូដែល ឬក្រុមហ៊ុនផលិតកម្ម"></p>
+                        <div id="product-alerts"></div>
+                        <div class="form-row" style="margin-bottom: 15px; gap: 10px;">
+                            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                                <label data-en="Search (Name/Model/Code)" data-km="ស្វាគម្នម (ឈ្មោះ/ម៉ូដែល/លេខ)"></label>
+                                <input type="text" id="productSearchQuery" placeholder="e.g., iPhone, Samsung, Model X" onkeypress="if(event.key === 'Enter') searchProducts()">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0; flex: 0.8;">
+                                <label data-en="Category" data-km="ប្រភេទ"></label>
+                                <select id="productCategory">
+                                    <option value="" data-en="All Categories" data-km="ប្រភេទផលិតផលទាំងអស់"></option>
+                                    <option value="Camera">Camera</option>
+                                    <option value="NVR">NVR</option>
+                                    <option value="HDD">HDD</option>
+                                    <option value="Computer">Computer</option>
+                                    <option value="Solar">Solar</option>
+                                    <option value="PV">PV</option>
+                                    <option value="Inverter">Inverter</option>
+                                    <option value="Battery Lithium">Battery Lithium</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Appliances">Appliances</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn-success" onclick="searchProducts()" style="width: 100%; margin-bottom: 20px;">
+                            <span data-en="🔎 Search Products" data-km="🔎 ស្វាគម្នមផលិតផល"></span>
+                        </button>
+                        <div id="product-results" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div id="manage-products-tab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="margin: 0;" data-en="📦 Product Management" data-km="📦 គ្រប់គ្រងផលិតផល"></h3>
+                            <button class="btn-success" onclick="showAddProductForm()" style="padding: 10px 20px;">
+                                <span data-en="➕ Add New Product" data-km="➕ បន្ថែមផលិតផលថ្មី"></span>
+                            </button>
+                        </div>
+
+                        <div id="product-alerts"></div>
+
+                        <!-- Add/Edit Product Form -->
+                        <div id="product-form" style="display: none; background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0;">
+                            <h4 id="form-title" data-en="Add New Product" data-km="បន្ថែមផលិតផលថ្មី"></h4>
+                            <div id="product-form-alerts"></div>
+
+                            <div class="form-row" style="margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Product Name *" data-km="ឈ្មោះផលិតផល *"></label>
+                                    <input type="text" id="productName" placeholder="e.g., iPhone 15 Pro">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Model *" data-km="ម៉ូដែល *"></label>
+                                    <input type="text" id="productModel" placeholder="e.g., A17 Pro">
+                                </div>
+                            </div>
+
+                            <div class="form-row" style="margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="SKU" data-km="លេខ SKU"></label>
+                                    <input type="text" id="productSKU" placeholder="e.g., IP15P-128-BLK">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Category" data-km="ប្រភេទ"></label>
+                                    <select id="productCategory">
+                                        <option value="" data-en="Select Category" data-km="ជ្រើសរើសប្រភេទ"></option>
+                                        <option value="Camera">Camera</option>
+                                        <option value="NVR">NVR</option>
+                                        <option value="HDD">HDD</option>
+                                        <option value="Computer">Computer</option>
+                                        <option value="Solar">Solar</option>
+                                        <option value="PV">PV</option>
+                                        <option value="Inverter">Inverter</option>
+                                        <option value="Battery Lithium">Battery Lithium</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Appliances">Appliances</option>
+                                        <option value="Accessories">Accessories</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row" style="margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Manufacturer" data-km="ក្រុមហ៊ុនផលិតកម្ម"></label>
+                                    <input type="text" id="productManufacturer" placeholder="e.g., Apple Inc.">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Stock Quantity" data-km="ចំនួនស្តុក"></label>
+                                    <input type="number" id="productStock" placeholder="0" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-row" style="margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Base Price" data-km="តម្លៃមូលដ្ឋាន"></label>
+                                    <input type="number" id="productBasePrice" placeholder="0.00" step="0.01" min="0">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Sale Price" data-km="តម្លៃលក់"></label>
+                                    <input type="number" id="productSalePrice" placeholder="0.00" step="0.01" min="0">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Cost Price" data-km="តម្លៃចំណាយ"></label>
+                                    <input type="number" id="productCostPrice" placeholder="0.00" step="0.01" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-row" style="margin-bottom: 15px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Currency" data-km="រូបិយប័ណ្ណ"></label>
+                                    <select id="productCurrency">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="KHR">KHR (៛)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label data-en="Warranty (Months)" data-km="ការធានា (ខែ)"></label>
+                                    <input type="number" id="productWarranty" placeholder="12" min="0" max="120">
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label data-en="Description" data-km="ការពិពណ៌នា"></label>
+                                <textarea id="productDescription" rows="3" placeholder="Product description..."></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                                <button class="btn-secondary" onclick="hideProductForm()">
+                                    <span data-en="❌ Cancel" data-km="❌ បោះបង់"></span>
+                                </button>
+                                <button class="btn-success" onclick="saveProduct()">
+                                    <span data-en="💾 Save Product" data-km="💾 រក្សាទុកផលិតផល"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Products List -->
+                        <div id="products-list">
+                            <p style="color: #999; text-align: center; padding: 40px;" data-en="Loading products..." data-km="កំពុងផ្ទុកផលិតផល..."></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="card">
+            <h2 data-en="📈 Sales Report" data-km="📈 របាយការណ៍ការលក់"></h2>
+            <div class="form-row" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label data-en="Start Date" data-km="ថ្ងៃចាប់ផ្តើម"></label>
+                    <input type="date" id="reportStart">
+                </div>
+                <div class="form-group">
+                    <label data-en="End Date" data-km="ថ្ងៃបញ្ចប់"></label>
+                    <input type="date" id="reportEnd">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn-primary" onclick="generateReport()"><span data-en="Generate Report" data-km="បង្កើតរបាយការណ៍"></span></button>
+                </div>
+            </div>
+            <div id="report-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        // Company Settings Storage
+        let companySettings = {};
+
+        // Load Company Settings from API
+        async function loadCompanySettings() {
+            try {
+                const response = await fetch(`${API_BASE}/settings`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.data) {
+                        companySettings = result.data;
+                        localStorage.setItem('companySettings', JSON.stringify(companySettings));
+                        displayCompanyInfo();
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.log('Failed to load settings from API, using localStorage:', error);
+                const saved = localStorage.getItem('companySettings');
+                if (saved) {
+                    companySettings = JSON.parse(saved);
+                    displayCompanyInfo();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Display Company Info on Dashboard
+        function displayCompanyInfo() {
+            if (!companySettings.company) return;
+            const company = companySettings.company;
+            
+            // Update company info section if it exists
+            const companyInfoEl = document.getElementById('company-info-display');
+            if (companyInfoEl) {
+                const infoText = `
+                    <strong>📍 ${company.name || 'Company Name'}</strong><br>
+                    ${company.email ? '📧 ' + company.email + '<br>' : ''}
+                    ${company.phone ? '☎ ' + company.phone + '<br>' : ''}
+                    ${company.website ? '🌐 ' + company.website + '<br>' : ''}
+                    ${(company.street || company.city) ? '📬 ' + (company.street || '') + (company.city ? ' ' + company.city : '') + ', ' + (company.state || '') + ' ' + (company.postal || '') : ''}
+                `;
+                companyInfoEl.innerHTML = infoText;
+                companyInfoEl.style.display = 'block';
+            }
+        }
+
+        // Check API Status on Load
+        window.addEventListener('load', function() {
+            loadCompanySettings();
+            checkAPIStatus();
+            loadInvoices();
+            loadPaymentInvoices();
+            loadReceiptInvoices();
+            loadDashboard();
+            
+            // Set date defaults
+            document.getElementById('reportStart').valueAsDate = new Date(new Date().setDate(new Date().getDate() - 30));
+            document.getElementById('reportEnd').valueAsDate = new Date();
+        });
+
+        // Line items storage
+        let lineItems = [];
+        let itemIdCounter = 0;
+        let availableProducts = [];
+
+        // ===== UX IMPROVEMENTS =====
+        // Toast Notifications
+        function showToast(message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <strong>${icons[type] || icons.info}</strong> ${message}
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+
+        // Enhanced Alert Replacement
+        function showAlert(containerId, message, type = 'info') {
+            // Show both toast and original alert for backward compatibility
+            showToast(message, type);
+
+            // Original alert functionality
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                container.style.display = 'block';
+                setTimeout(() => {
+                    container.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Loading States
+        function setLoading(button, loading = true) {
+            if (loading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
+
+        // Auto-save for Invoices
+        let autoSaveTimeout;
+        function autoSaveInvoice() {
+            clearTimeout(autoSaveTimeout);
+            const indicator = document.getElementById('auto-save-indicator');
+
+            autoSaveTimeout = setTimeout(() => {
+                // Save current invoice state to localStorage
+                const invoiceData = {
+                    customer: {
+                        name: document.getElementById('customerName').value,
+                        email: document.getElementById('customerEmail').value,
+                        phone: document.getElementById('customerPhone').value,
+                        city: document.getElementById('customerCity').value,
+                        country: document.getElementById('customerCountry').value
+                    },
+                    currency: document.getElementById('currency').value,
+                    language: document.getElementById('language').value,
+                    lineItems: lineItems,
+                    taxAmount: document.getElementById('taxAmount').value,
+                    taxPercentage: document.getElementById('taxPercentage').value,
+                    timestamp: new Date().toISOString()
+                };
+
+                localStorage.setItem('invoice_draft', JSON.stringify(invoiceData));
+
+                indicator.textContent = '💾 Draft saved';
+                indicator.className = 'auto-save-indicator saved';
+                indicator.style.display = 'block';
+
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 2000);
+
+            }, 2000); // Save after 2 seconds of inactivity
+        }
+
+        function loadInvoiceDraft() {
+            const draft = localStorage.getItem('invoice_draft');
+            if (draft) {
+                try {
+                    const data = JSON.parse(draft);
+                    // Only load if draft is less than 24 hours old
+                    const draftTime = new Date(data.timestamp);
+                    const now = new Date();
+                    const hoursDiff = (now - draftTime) / (1000 * 60 * 60);
+
+                    if (hoursDiff < 24) {
+                        // Populate form fields
+                        document.getElementById('customerName').value = data.customer.name || '';
+                        document.getElementById('customerEmail').value = data.customer.email || '';
+                        document.getElementById('customerPhone').value = data.customer.phone || '';
+                        document.getElementById('customerCity').value = data.customer.city || '';
+                        document.getElementById('customerCountry').value = data.customer.country || '';
+                        document.getElementById('currency').value = data.currency || 'USD';
+                        document.getElementById('language').value = data.language || 'en';
+                        document.getElementById('taxAmount').value = data.taxAmount || '';
+                        document.getElementById('taxPercentage').value = data.taxPercentage || '';
+
+                        // Load line items
+                        if (data.lineItems && data.lineItems.length > 0) {
+                            lineItems = data.lineItems;
+                            itemIdCounter = Math.max(...data.lineItems.map(item => item.id)) + 1;
+                            renderLineItems();
+                        }
+
+                        showToast('📝 Invoice draft loaded from previous session', 'info');
+                    }
+                } catch (error) {
+                    console.error('Error loading draft:', error);
+                }
+            }
+        }
+
+        // Quick Actions
+        function toggleQuickActions() {
+            const menu = document.getElementById('quick-actions-menu');
+            menu.classList.toggle('show');
+        }
+
+        function quickAddProduct() {
+            switchTab('manage-products');
+            showAddProductForm();
+            document.getElementById('quick-actions-menu').classList.remove('show');
+            showToast('📦 Ready to add new product', 'info');
+        }
+
+        function quickCreateInvoice() {
+            switchTab('create-invoice');
+            document.getElementById('quick-actions-menu').classList.remove('show');
+            showToast('📄 Ready to create invoice', 'info');
+        }
+
+        function showKeyboardShortcuts() {
+            document.getElementById('keyboard-shortcuts').classList.add('show');
+            document.getElementById('quick-actions-menu').classList.remove('show');
+        }
+
+        function hideKeyboardShortcuts() {
+            document.getElementById('keyboard-shortcuts').classList.remove('show');
+        }
+
+        function exportData() {
+            showToast('📊 Export feature coming soon!', 'info');
+            document.getElementById('quick-actions-menu').classList.remove('show');
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Only handle shortcuts when not typing in inputs
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') {
+                return;
+            }
+
+            if (event.ctrlKey || event.metaKey) {
+                switch (event.key) {
+                    case 's':
+                        event.preventDefault();
+                        if (document.getElementById('create-invoice-tab').classList.contains('active')) {
+                            createInvoice();
+                        }
+                        break;
+                    case 'Enter':
+                        event.preventDefault();
+                        if (document.getElementById('create-invoice-tab').classList.contains('active')) {
+                            addLineItem();
+                        }
+                        break;
+                    case 'f':
+                        event.preventDefault();
+                        switchTab('search-products');
+                        document.getElementById('productSearchQuery').focus();
+                        break;
+                    case 'l':
+                        event.preventDefault();
+                        const langSelect = document.getElementById('uiLanguage');
+                        langSelect.value = langSelect.value === 'en' ? 'km' : 'en';
+                        changeUILanguage(langSelect.value);
+                        break;
+                }
+            } else {
+                // Number keys for tab switching
+                const tabNumber = parseInt(event.key);
+                if (tabNumber >= 1 && tabNumber <= 6) {
+                    event.preventDefault();
+                    const tabs = ['dashboard', 'search-products', 'create-invoice', 'manage-invoices', 'manage-products', 'warranty-lookup'];
+                    if (tabs[tabNumber - 1]) {
+                        switchTab(tabs[tabNumber - 1]);
+                    }
+                }
+            }
+        });
+
+        // Enhanced Form Validation
+        function validateField(field, rules) {
+            const value = field.value.trim();
+            const formGroup = field.closest('.form-group');
+            let isValid = true;
+            let errorMessage = '';
+
+            // Remove previous validation classes
+            formGroup.classList.remove('error', 'success');
+
+            // Required check
+            if (rules.required && !value) {
+                isValid = false;
+                errorMessage = 'This field is required';
+            }
+
+            // Email validation
+            if (rules.email && value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+            }
+
+            // Number validation
+            if (rules.number && value) {
+                if (isNaN(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid number';
+                } else {
+                    const num = parseFloat(value);
+                    if (rules.min !== undefined && num < rules.min) {
+                        isValid = false;
+                        errorMessage = `Minimum value is ${rules.min}`;
+                    }
+                    if (rules.max !== undefined && num > rules.max) {
+                        isValid = false;
+                        errorMessage = `Maximum value is ${rules.max}`;
+                    }
+                }
+            }
+
+            // Update field appearance
+            if (!isValid) {
+                formGroup.classList.add('error');
+                const errorElement = formGroup.querySelector('.field-error');
+                if (errorElement) {
+                    errorElement.textContent = errorMessage;
+                }
+            } else if (value) {
+                formGroup.classList.add('success');
+            }
+
+            return isValid;
+        }
+
+        // Initialize UX improvements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load company settings on page load
+            loadCompanySettings();
+            
+            // Load invoice draft on page load
+            loadInvoiceDraft();
+
+            // Show welcome message for new features
+            const hasSeenWelcome = localStorage.getItem('has_seen_welcome_v2');
+            if (!hasSeenWelcome) {
+                setTimeout(() => {
+                    showToast('🎉 Welcome! New features: Quick Actions (⚡), Keyboard Shortcuts (Ctrl+?), Auto-save drafts, and Enhanced notifications!', 'info', 8000);
+                    localStorage.setItem('has_seen_welcome_v2', 'true');
+                }, 2000);
+            }
+
+            // Add auto-save listeners to invoice form
+            const invoiceInputs = document.querySelectorAll('#create-invoice-tab input, #create-invoice-tab select, #create-invoice-tab textarea');
+            invoiceInputs.forEach(input => {
+                input.addEventListener('input', autoSaveInvoice);
+            });
+
+            // Add real-time validation
+            document.querySelectorAll('input[required], select[required]').forEach(field => {
+                field.addEventListener('blur', function() {
+                    validateField(this, { required: true });
+                });
+            });
+
+            // Add validation to email fields
+            document.querySelectorAll('input[type="email"]').forEach(field => {
+                field.addEventListener('blur', function() {
+                    validateField(this, { email: true });
+                });
+            });
+
+            // Add validation to number fields
+            document.querySelectorAll('input[type="number"]').forEach(field => {
+                const min = field.min ? parseFloat(field.min) : undefined;
+                const max = field.max ? parseFloat(field.max) : undefined;
+                field.addEventListener('blur', function() {
+                    validateField(this, { number: true, min, max });
+                });
+            });
+
+            // Close menus when clicking outside
+            document.addEventListener('click', function(event) {
+                const quickActions = document.querySelector('.quick-actions');
+                const keyboardShortcuts = document.getElementById('keyboard-shortcuts');
+
+                if (!quickActions.contains(event.target)) {
+                    document.getElementById('quick-actions-menu').classList.remove('show');
+                }
+
+                if (!keyboardShortcuts.contains(event.target) && !event.target.closest('.quick-action-item')) {
+                    keyboardShortcuts.classList.remove('show');
+                }
+            });
+        });
+
+        async function loadProductsForInvoice() {
+            try {
+                const res = await fetch(`${API_BASE}/product`);
+                if (!res.ok) throw new Error('Failed to load products');
+
+                availableProducts = await res.json();
+            } catch (error) {
+                console.error('Load products for invoice error:', error);
+                availableProducts = [];
+            }
+        }
+
+        // Initialize with one empty line item
+        window.addEventListener('load', function() {
+            loadProductsForInvoice();
+            if (lineItems.length === 0) {
+                addLineItem();
+            }
+        });
+
+        function addLineItem() {
+            const itemId = itemIdCounter++;
+            lineItems.push({
+                id: itemId,
+                productId: '',
+                productName: '',
+                productModel: '',
+                manufacturer: '',
+                unitPrice: 0,
+                quantity: 1,
+                warranty: 24,
+                serial: ''
+            });
+            renderLineItems();
+        }
+
+        function removeLineItem(itemId) {
+            lineItems = lineItems.filter(item => item.id !== itemId);
+            if (lineItems.length === 0) {
+                addLineItem();
+            }
+            renderLineItems();
+        }
+
+        function updateLineItem(itemId, field, value) {
+            const item = lineItems.find(i => i.id === itemId);
+            if (item) {
+                item[field] = value;
+                renderLineItems();
+            }
+        }
+
+        function selectProductForLineItem(itemId, productId) {
+            const item = lineItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (productId === '') {
+                // Clear all fields when "Select Product" is chosen
+                item.productId = '';
+                item.productName = '';
+                item.productModel = '';
+                item.manufacturer = '';
+                item.unitPrice = 0;
+                item.warranty = 24;
+            } else {
+                // Find the selected product and auto-fill fields
+                const product = availableProducts.find(p => p.id === productId);
+                if (product) {
+                    item.productId = product.id;
+                    item.productName = product.name;
+                    item.productModel = product.model;
+                    item.manufacturer = product.manufacturer || '';
+                    item.unitPrice = product.sale_price || product.base_price || 0;
+                    item.warranty = product.default_warranty_months || 24;
+                }
+            }
+            renderLineItems();
+        }
+
+        function renderLineItems() {
+            const container = document.getElementById('items-container');
+            const lang = localStorage.getItem('uiLanguage') || 'en';
+            
+            const labels = {
+                en: {
+                    noItems: 'No items added',
+                    productName: 'Product Name',
+                    model: 'Model',
+                    manufacturer: 'Manufacturer',
+                    unitPrice: 'Unit Price',
+                    quantity: 'Quantity',
+                    warranty: 'Warranty (months)',
+                    serialNumber: 'Serial Number',
+                    remove: '✕ Remove',
+                    selectProduct: 'Select Product (Optional)'
+                },
+                km: {
+                    noItems: 'មិនមានទំនិត្ម添加ទេ',
+                    productName: 'ឈ្មោះផលិតផល',
+                    model: 'ម៉ូដែល',
+                    manufacturer: 'ក្រុមហ៊ុនផលិតកម្ម',
+                    unitPrice: 'តម្លៃឯកតា',
+                    quantity: 'បរិមាណ',
+                    warranty: 'ការធានា (ខែ)',
+                    serialNumber: 'លេខលម្អិតស៉ែរ',
+                    remove: '✕ លុប',
+                    selectProduct: 'ជ្រើសរើសផលិតផល (ស្រេចចិត្ត)'
+                }
+            };
+            
+            const t = labels[lang] || labels.en;
+            
+            if (lineItems.length === 0) {
+                container.innerHTML = `<p style="color: #999;">${t.noItems}</p>`;
+                return;
+            }
+
+            container.innerHTML = lineItems.map(item => {
+                const productOptions = availableProducts.map(product => 
+                    `<option value="${product.id}" ${item.productId === product.id ? 'selected' : ''}>${product.name} - ${product.model} (${product.currency || 'USD'} ${product.sale_price || product.base_price || 0})</option>`
+                ).join('');
+
+                return `
+                <div style="background: white; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ddd;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; color: #666;">${t.selectProduct}</label>
+                        <select onchange="selectProductForLineItem(${item.id}, this.value)" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                            <option value="">Manual Entry</option>
+                            ${productOptions}
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.productName}</label>
+                            <input type="text" value="${item.productName}" 
+                                onchange="updateLineItem(${item.id}, 'productName', this.value)"
+                                placeholder="iPhone 15 Pro" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.model}</label>
+                            <input type="text" value="${item.productModel}" 
+                                onchange="updateLineItem(${item.id}, 'productModel', this.value)"
+                                placeholder="A2846" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.manufacturer}</label>
+                            <input type="text" value="${item.manufacturer}" 
+                                onchange="updateLineItem(${item.id}, 'manufacturer', this.value)"
+                                placeholder="Apple" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.unitPrice}</label>
+                            <input type="number" value="${item.unitPrice}" 
+                                onchange="updateLineItem(${item.id}, 'unitPrice', parseFloat(this.value))"
+                                placeholder="999.99" step="0.01" min="0" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.quantity}</label>
+                            <input type="number" value="${item.quantity}" 
+                                onchange="updateLineItem(${item.id}, 'quantity', parseInt(this.value))"
+                                placeholder="1" min="1" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.warranty}</label>
+                            <input type="number" value="${item.warranty}" 
+                                onchange="updateLineItem(${item.id}, 'warranty', parseInt(this.value))"
+                                placeholder="24" min="0" max="60" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="font-size: 12px; color: #666;">${t.serialNumber}</label>
+                            <input type="text" value="${item.serial}" 
+                                onchange="updateLineItem(${item.id}, 'serial', this.value)"
+                                placeholder="SN-2026-001" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        </div>
+                        <div style="display: flex; align-items: flex-end;">
+                            <button onclick="removeLineItem(${item.id})" style="width: 100%; padding: 5px; background: #f44336; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                                ${t.remove}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `}).join('');
+
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let subtotal = 0;
+            lineItems.forEach(item => {
+                subtotal += (item.unitPrice || 0) * (item.quantity || 1);
+            });
+
+            const taxAmt = parseFloat(document.getElementById('taxAmount').value) || 0;
+            const total = subtotal + taxAmt;
+
+            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('tax').textContent = '$' + taxAmt.toFixed(2);
+            document.getElementById('total').textContent = '$' + total.toFixed(2);
+        }
+
+        // Add event listeners for tax inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const taxAmountInput = document.getElementById('taxAmount');
+            const taxPercentageInput = document.getElementById('taxPercentage');
+            
+            if (taxAmountInput) {
+                taxAmountInput.addEventListener('input', function() {
+                    calculateTotal();
+                });
+            }
+            
+            if (taxPercentageInput) {
+                taxPercentageInput.addEventListener('input', function() {
+                    const percentage = parseFloat(this.value) || 0;
+                    let subtotal = 0;
+                    lineItems.forEach(item => {
+                        subtotal += (item.unitPrice || 0) * (item.quantity || 1);
+                    });
+                    const taxAmt = (subtotal * percentage) / 100;
+                    if (taxAmountInput) {
+                        taxAmountInput.value = taxAmt.toFixed(2);
+                    }
+                    calculateTotal();
+                });
+            }
+        });
+
+        function checkAPIStatus() {
+            fetch(`${API_BASE}/product`)
+                .then(r => r.json())
+                .then(() => {
+                    document.getElementById('api-status').style.background = '#4CAF50';
+                    showAlert('invoice-alerts', 'API connected successfully!', 'success');
+                })
+                .catch(() => {
+                    document.getElementById('api-status').style.background = '#f44336';
+                    showAlert('invoice-alerts', 'Backend API is offline. Please start the server.', 'error');
+                });
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertBox = document.getElementById(elementId);
+            if (!alertBox) return;
+            
+            if (alertBox.innerHTML.includes('success') || alertBox.innerHTML.includes('error')) {
+                alertBox.innerHTML = '';
+            }
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertBox.appendChild(alertDiv);
+            
+            setTimeout(() => alertDiv.remove(), 4000);
+        }
+
+        async function createInvoice() {
+            const createButton = document.querySelector('#create-invoice-tab button[onclick="createInvoice()"]');
+
+            const name = document.getElementById('customerName').value;
+            const emailInput = document.getElementById('customerEmail').value;
+            const phone = document.getElementById('customerPhone').value;
+            const city = document.getElementById('customerCity').value;
+            const country = document.getElementById('customerCountry').value;
+            const currency = document.getElementById('currency').value;
+            const language = document.getElementById('language').value;
+
+            // Validate customer info
+            if (!name || !emailInput) {
+                showToast('Please fill in customer name and email!', 'error');
+                return;
+            }
+
+            // Validate line items
+            if (lineItems.length === 0 || lineItems.every(item => !item.productName || item.unitPrice <= 0)) {
+                showToast('Please add at least one product with valid details!', 'error');
+                return;
+            }
+
+            // Set loading state
+            setLoading(createButton, true);
+            showToast('🔄 Creating invoice...', 'info');
+
+            try {
+                // Step 1: Create Customer
+                let uniqueEmail;
+                if (emailInput && emailInput.includes('@')) {
+                    const parts = emailInput.split('@');
+                    uniqueEmail = `${parts[0]}_${Date.now()}@${parts[1]}`;
+                } else {
+                    uniqueEmail = `customer_${Date.now()}@example.com`;
+                }
+
+                const customerRes = await fetch(`${API_BASE}/customer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name, 
+                        email: uniqueEmail, 
+                        phone, 
+                        address: 'Address',
+                        city: city || 'City', 
+                        country: country || 'Country'
+                    })
+                });
+
+                if (!customerRes.ok) {
+                    const errorData = await customerRes.json();
+                    throw new Error(errorData.error || 'Customer creation failed');
+                }
+                const customerData = await customerRes.json();
+                const customerId = customerData.customer.id;
+
+                // Step 2: Process line items (use existing products or create new ones)
+                const invoiceLineItems = [];
+                for (const item of lineItems) {
+                    if (!item.productName || item.unitPrice <= 0) continue;
+
+                    let productId;
+
+                    // If a product was selected from dropdown, use its ID
+                    if (item.productId) {
+                        productId = item.productId;
+                    } else {
+                        // Create new product for manual entries
+                        const productRes = await fetch(`${API_BASE}/product`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: item.productName,
+                                model: item.productModel || `MODEL-${Date.now()}-${item.id}`,
+                                category: 'Electronics',
+                                description: item.productName,
+                                manufacturer: item.manufacturer || 'Unknown'
+                            })
+                        });
+
+                        if (!productRes.ok) {
+                            throw new Error(`Failed to create product: ${item.productName}`);
+                        }
+                        const productData = await productRes.json();
+                        productId = productData.product.id;
+                    }
+
+                    // Generate unique serial number
+                    const uniqueSerial = item.serial ? `${item.serial}_${Date.now()}_${item.id}` : `SN-${Date.now()}-${item.id}`;
+
+                    invoiceLineItems.push({
+                        product_id: productId,
+                        quantity: item.quantity || 1,
+                        unit_price: item.unitPrice || 0,
+                        warranty_duration_months: item.warranty || 24,
+                        serial_number: uniqueSerial,
+                        description: item.productName
+                    });
+                }
+
+                if (invoiceLineItems.length === 0) {
+                    throw new Error('No valid line items to create invoice');
+                }
+
+                // Step 3: Create Invoice with all line items
+                const taxAmt = parseFloat(document.getElementById('taxAmount').value) || 0;
+                const invoiceRes = await fetch(`${API_BASE}/invoice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_id: customerId,
+                        invoice_date: new Date().toISOString(),
+                        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                        line_items: invoiceLineItems,
+                        tax_amount: taxAmt,
+                        currency: currency,
+                        language: language
+                    })
+                });
+
+                if (!invoiceRes.ok) {
+                    const errorData = await invoiceRes.json();
+                    throw new Error(errorData.error || 'Invoice creation failed');
+                }
+                const invoiceData = await invoiceRes.json();
+
+                showToast(`✅ Invoice ${invoiceData.invoice_number} created successfully! (${invoiceLineItems.length} items)`, 'success');
+
+                // Clear form and remove draft
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerEmail').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('customerCity').value = '';
+                document.getElementById('customerCountry').value = '';
+                document.getElementById('taxAmount').value = '0';
+                document.getElementById('taxPercentage').value = '0';
+
+                // Reset line items
+                lineItems = [];
+                addLineItem();
+                renderLineItems();
+
+                // Clear draft from localStorage
+                localStorage.removeItem('invoice_draft');
+
+                // Refresh lists
+                setTimeout(() => {
+                    loadInvoices();
+                    loadPaymentInvoices();
+                    loadReceiptInvoices();
+                    loadDashboard();
+                }, 500);
+            } catch (error) {
+                console.error('Invoice creation error:', error);
+                showToast(`❌ ${error.message}`, 'error');
+            } finally {
+                // Reset loading state
+                setLoading(createButton, false);
+            }
+        }
+
+        async function loadInvoices() {
+            try {
+                const res = await fetch(`${API_BASE}/invoice`);
+                const data = await res.json();
+                const invoiceList = document.getElementById('invoice-list');
+
+                if (!data.data || data.data.length === 0) {
+                    invoiceList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No invoices yet.</p>';
+                    return;
+                }
+
+                invoiceList.innerHTML = data.data.map(inv => `
+                    <div class="invoice-item">
+                        <div class="invoice-item-info">
+                            <div class="invoice-number">${inv.invoice_number}</div>
+                            <div class="invoice-meta">
+                                ${new Date(inv.invoice_date).toLocaleDateString()} • ${inv.customer_id.substring(0, 8)}...
+                            </div>
+                        </div>
+                        <span class="badge badge-${inv.invoice_status || 'draft'}">${(inv.invoice_status || 'draft').toUpperCase()}</span>
+                        <div class="invoice-amount">${inv.currency} ${inv.grand_total?.toFixed(2) || '0.00'}</div>
+                        <div style="margin-top: 10px;">
+                            <button onclick="printInvoice('${inv.id}')" class="btn-small" style="background: #2196F3; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">🖨️ Print</button>
+                            <button onclick="viewInvoiceDetails('${inv.id}')" class="btn-small" style="background: #667eea; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">👁️ View</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.log('Error loading invoices:', error);
+            }
+        }
+
+        async function loadPaymentInvoices() {
+            try {
+                const res = await fetch(`${API_BASE}/invoice`);
+                const data = await res.json();
+                const select = document.getElementById('paymentInvoice');
+                
+                if (data.data && data.data.length > 0) {
+                    select.innerHTML = '<option>-- Select Invoice --</option>' + 
+                        data.data.map(inv => 
+                            `<option value="${inv.id}">${inv.invoice_number} - ${inv.currency} ${inv.grand_total?.toFixed(2) || '0.00'}</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.log('Error loading payment invoices:', error);
+            }
+        }
+
+        async function loadReceiptInvoices() {
+            try {
+                const res = await fetch(`${API_BASE}/invoice`);
+                const data = await res.json();
+                const select = document.getElementById('receiptInvoice');
+                
+                if (data.data && data.data.length > 0) {
+                    select.innerHTML = '<option>-- Select Invoice --</option>' + 
+                        data.data.filter(inv => inv.invoice_status === 'paid').map(inv => 
+                            `<option value="${inv.id}">${inv.invoice_number} - ${inv.currency} ${inv.grand_total?.toFixed(2) || '0.00'}</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.log('Error loading receipt invoices:', error);
+            }
+        }
+
+        // Update payment method form based on payment type
+        function updatePaymentMethodForm() {
+            const paymentType = document.getElementById('paymentType').value;
+            const cashForm = document.getElementById('cashPaymentForm');
+            const bankForm = document.getElementById('bankPaymentForm');
+            
+            if (paymentType === 'cash') {
+                cashForm.style.display = 'block';
+                bankForm.style.display = 'none';
+            } else {
+                cashForm.style.display = 'none';
+                bankForm.style.display = 'block';
+            }
+        }
+        
+        // Update bank details display
+        function updateBankDetails() {
+            const bankMethod = document.getElementById('bankMethod').value;
+            const detailsDisplay = document.getElementById('bankDetailsDisplay');
+            const bankAccountInfo = document.getElementById('bankAccountInfo');
+            
+            if (!bankMethod) {
+                detailsDisplay.style.display = 'none';
+                return;
+            }
+            
+            let info = '';
+            switch(bankMethod) {
+                case 'khqr':
+                    info = '🇰🇭 <strong>KHQR (Bakong)</strong><br>Scan QR code for instant payment<br>Merchant ID: Available in Company Settings';
+                    break;
+                case 'aba':
+                    info = '🏛️ <strong>ABA Bank</strong><br>Account Number: Available in Company Settings<br>Branch: Any ABA branch in Cambodia';
+                    break;
+                case 'acleda':
+                    info = '🏛️ <strong>ACLEDA Bank</strong><br>Account Number: Available in Company Settings<br>Branch: Any ACLEDA branch in Cambodia';
+                    break;
+                case 'other':
+                    info = '🏦 <strong>Other Bank</strong><br>Please enter bank details and transaction reference below';
+                    break;
+            }
+            
+            bankAccountInfo.innerHTML = info;
+            detailsDisplay.style.display = 'block';
+        }
+        
+        async function recordPayment() {
+            const invoiceId = document.getElementById('paymentInvoice').value;
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const paymentType = document.getElementById('paymentType').value;
+            
+            if (!invoiceId || invoiceId === '-- Select Invoice --' || !amount) {
+                showAlert('invoice-alerts', 'Please select an invoice and enter amount!', 'error');
+                return;
+            }
+
+            try {
+                let paymentData = {
+                    amount: amount,
+                    payment_method: paymentType,
+                    payment_date: new Date().toISOString(),
+                    transaction_id: `txn_${Date.now()}`
+                };
+                
+                // Add type-specific details
+                if (paymentType === 'cash') {
+                    paymentData.gateway = 'cash';
+                    paymentData.cash_currency = document.getElementById('cashCurrency').value;
+                    paymentData.notes = document.getElementById('cashNotes').value;
+                } else if (paymentType === 'bank') {
+                    const bankMethod = document.getElementById('bankMethod').value;
+                    const transactionId = document.getElementById('bankTransactionId').value;
+                    
+                    if (!bankMethod) {
+                        showAlert('invoice-alerts', 'Please select a bank!', 'error');
+                        return;
+                    }
+                    
+                    if (!transactionId) {
+                        showAlert('invoice-alerts', 'Please enter transaction reference!', 'error');
+                        return;
+                    }
+                    
+                    paymentData.gateway = bankMethod;
+                    paymentData.transaction_id = transactionId;
+                    paymentData.payment_method = bankMethod;
+                }
+                
+                const res = await fetch(`${API_BASE}/invoice/${invoiceId}/payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Payment failed');
+                }
+                const data = await res.json();
+                
+                showAlert('invoice-alerts', `✓ Payment recorded! Invoice status: ${data.invoice_status}`, 'success');
+                
+                // Reset form
+                document.getElementById('paymentAmount').value = '';
+                document.getElementById('paymentInvoice').value = '-- Select Invoice --';
+                document.getElementById('bankTransactionId').value = '';
+                document.getElementById('cashNotes').value = '';
+                
+                setTimeout(() => {
+                    loadInvoices();
+                    loadPaymentInvoices();
+                    loadReceiptInvoices();
+                    loadDashboard();
+                }, 500);
+            } catch (error) {
+                console.error('Payment error:', error);
+                showAlert('invoice-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        async function generateReceipt() {
+            const invoiceId = document.getElementById('receiptInvoice').value;
+            const format = document.getElementById('receiptFormat').value;
+            const destination = document.getElementById('receiptDestination').value;
+
+            if (!invoiceId || invoiceId === '-- Select Invoice --') {
+                showAlert('invoice-alerts', 'Please select an invoice!', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/invoice/${invoiceId}/receipt/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        format: format,
+                        send_method: format === 'pdf' ? 'download' : 'send',
+                        send_to: destination || null
+                    })
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Receipt generation failed');
+                }
+                const data = await res.json();
+                
+                showAlert('invoice-alerts', `✓ Receipt generated: ${data.receipt_number}`, 'success');
+                
+                // Show receipt preview with action buttons
+                const preview = document.getElementById('receipt-preview');
+                const receiptId = data.receipt_id;
+                preview.innerHTML = `
+                    <div class="receipt-output-card" style="background: #f9f9f9; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin-top: 15px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div>
+                                <div style="font-size: 20px; font-weight: 700; color: #333;">✓ ${data.receipt_number}</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 5px;">Generated: ${new Date().toLocaleString()}</div>
+                                <div style="font-size: 12px; color: #999;">Format: ${format}</div>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 600; color: #4CAF50; background: #d4edda; padding: 8px 16px; border-radius: 20px;">
+                                Ready ✓
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn-success" onclick="openReceiptPDF('${invoiceId}')" style="flex: 1; padding: 12px; border: none; border-radius: 5px; background: #667eea; color: white; font-weight: 600; cursor: pointer;">
+                                📄 Open PDF
+                            </button>
+                            <button class="btn-success" onclick="printReceiptDirect('${invoiceId}')" style="flex: 1; padding: 12px; border: none; border-radius: 5px; background: #2196F3; color: white; font-weight: 600; cursor: pointer;">
+                                🖨️ Print Now
+                            </button>
+                            <button class="btn-success" onclick="downloadReceipt('${invoiceId}')" style="flex: 1; padding: 12px; border: none; border-radius: 5px; background: #4CAF50; color: white; font-weight: 600; cursor: pointer;">
+                                💾 Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Receipt error:', error);
+                showAlert('invoice-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        function openReceiptPDF(invoiceId) {
+            const receiptUrl = `${API_BASE}/invoice/${invoiceId}/receipt/print`;
+            window.open(receiptUrl, 'receipt_' + invoiceId, 'width=900,height=1000');
+        }
+
+        function printReceiptDirect(invoiceId) {
+            const receiptUrl = `${API_BASE}/invoice/${invoiceId}/receipt/print`;
+            const printWindow = window.open(receiptUrl, 'receipt_print', 'width=900,height=1000');
+            setTimeout(() => {
+                printWindow.print();
+            }, 1000);
+        }
+
+        function downloadReceipt(invoiceId) {
+            // Open in new window which browser may auto-download
+            window.open(`${API_BASE}/invoice/${invoiceId}/receipt/print?download=true`, '_blank');
+        }
+
+        async function generateReport() {
+            const start = document.getElementById('reportStart').value;
+            const end = document.getElementById('reportEnd').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/invoice/report/summary?start_date=${start}&end_date=${end}`);
+                const data = await res.json();
+
+                const reportDiv = document.getElementById('report-content');
+                reportDiv.innerHTML = `
+                    <div class="stats-grid" style="margin-top: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Invoices</div>
+                            <div class="stat-value">${data.total_invoices || 0}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value">$${(data.total_revenue || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Paid Amount</div>
+                            <div class="stat-value">$${(data.paid_amount || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Outstanding</div>
+                            <div class="stat-value">$${(data.outstanding_amount || 0).toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('report-content').innerHTML = `<div class="alert alert-error">Error generating report: ${error.message}</div>`;
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API_BASE}/invoice`);
+                const data = await res.json();
+
+                const total = data.total || 0;
+                const revenue = data.data ? data.data.reduce((sum, inv) => sum + (inv.grand_total || 0), 0) : 0;
+
+                document.getElementById('stat-invoices').textContent = total;
+                document.getElementById('stat-revenue').textContent = '$' + revenue.toFixed(2);
+                document.getElementById('invoice-count').textContent = total;
+                document.getElementById('total-revenue').textContent = '$' + revenue.toFixed(2);
+            } catch (error) {
+                console.log('Error loading dashboard:', error);
+            }
+        }
+
+        // Print invoice
+        function printInvoice(invoiceId) {
+            const printWindow = window.open(`http://localhost:5000/api/invoice/${invoiceId}/print`, '_blank');
+            if (printWindow) {
+                printWindow.focus();
+            }
+        }
+        
+        // Print receipt
+        function printReceipt(invoiceId) {
+            const printWindow = window.open(`http://localhost:5000/api/invoice/${invoiceId}/receipt/print`, '_blank');
+            if (printWindow) {
+                printWindow.focus();
+            }
+        }
+        
+        // View invoice details
+        async function viewInvoiceDetails(invoiceId) {
+            try {
+                const res = await fetch(`${API_BASE}/invoice/${invoiceId}`);
+                const data = await res.json();
+                const invoice = data.data || data;
+                
+                let itemsHtml = '';
+                if (invoice.line_items && invoice.line_items.length > 0) {
+                    itemsHtml = invoice.line_items.map(item => `
+                        <tr>
+                            <td>${item.description}</td>
+                            <td>${item.quantity}</td>
+                            <td>${invoice.currency} ${item.unit_price?.toFixed(2) || '0.00'}</td>
+                            <td>${invoice.currency} ${item.line_total?.toFixed(2) || '0.00'}</td>
+                        </tr>
+                    `).join('');
+                }
+                
+                const detailsHtml = `
+                    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;" onclick="this.style.display='none';">
+                        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;">
+                            <button onclick="this.parentElement.parentElement.style.display='none'" style="position: absolute; top: 10px; right: 10px; background: #f44336; color: white; border: none; padding: 8px 12px; border-radius: 3px; cursor: pointer;">❌</button>
+                            <h2>${invoice.invoice_number}</h2>
+                            <p><strong>Date:</strong> ${new Date(invoice.invoice_date).toLocaleDateString()}</p>
+                            <p><strong>Status:</strong> <span class="badge badge-${invoice.invoice_status || 'draft'}">${(invoice.invoice_status || 'draft').toUpperCase()}</span></p>
+                            <p><strong>Payment Status:</strong> <span class="badge badge-${invoice.payment_status || 'pending'}">${(invoice.payment_status || 'pending').toUpperCase()}</span></p>
+                            
+                            <h3 style="margin-top: 20px;">Items</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr style="background: #f0f0f0;">
+                                    <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Description</th>
+                                    <th style="border: 1px solid #ddd; padding: 10px;">Qty</th>
+                                    <th style="border: 1px solid #ddd; padding: 10px;">Price</th>
+                                    <th style="border: 1px solid #ddd; padding: 10px;">Total</th>
+                                </tr>
+                                ${itemsHtml}
+                            </table>
+                            
+                            <div style="margin-top: 20px; text-align: right;">
+                                <p><strong>Subtotal:</strong> ${invoice.currency} ${(invoice.subtotal || 0).toFixed(2)}</p>
+                                <p><strong>Tax:</strong> ${invoice.currency} ${(invoice.tax_amount || 0).toFixed(2)}</p>
+                                <p><strong>Total:</strong> <span style="font-size: 20px; color: #667eea;">${invoice.currency} ${(invoice.grand_total || 0).toFixed(2)}</span></p>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <button onclick="printInvoice('${invoiceId}')" class="btn-primary" style="padding: 10px 20px; margin-right: 10px;">🖨️ Print</button>
+                                <button onclick="printReceipt('${invoiceId}')" class="btn-primary" style="padding: 10px 20px;">🧾 Print Receipt</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.innerHTML += detailsHtml;
+            } catch (error) {
+                showAlert('invoice-alerts', `Error loading invoice details: ${error.message}`, 'error');
+            }
+        }
+
+        // ===== WARRANTY LOOKUP FUNCTIONS =====
+        async function searchWarrantyBySerial() {
+            const serialNumber = document.getElementById('searchSerialNumber').value.trim();
+            if (!serialNumber) {
+                showAlert('warranty-alerts', '⚠️ Please enter a serial number', 'warning');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/warranty/serial/${encodeURIComponent(serialNumber)}`);
+                
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        displayWarrantyNotFound(serialNumber);
+                    } else {
+                        throw new Error('Failed to search warranty');
+                    }
+                    return;
+                }
+
+                const warranty = await res.json();
+                displayWarrantyResult(warranty);
+            } catch (error) {
+                console.error('Warranty search error:', error);
+                showAlert('warranty-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        function displayWarrantyNotFound(serialNumber) {
+            const result = document.getElementById('warranty-result');
+            result.style.display = 'block';
+            result.innerHTML = `
+                <div style="background: #ffebee; border: 2px solid #f44336; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                    <div style="font-size: 24px; font-weight: 700; color: #f44336; margin-bottom: 10px;">❌ Not Found</div>
+                    <p style="color: #c62828; margin: 5px 0;">Serial Number: <strong>${serialNumber}</strong></p>
+                    <p style="color: #999; margin-top: 15px; font-size: 14px;">This product is not registered in the warranty system.</p>
+                </div>
+            `;
+            showAlert('warranty-alerts', `❌ Warranty not found for serial: ${serialNumber}`, 'error');
+        }
+
+        function displayWarrantyResult(warranty) {
+            const result = document.getElementById('warranty-result');
+            
+            // Calculate warranty status
+            const now = new Date();
+            const warrantyEnd = new Date(warranty.warranty_end_date);
+            const daysRemaining = Math.ceil((warrantyEnd - now) / (1000 * 60 * 60 * 24));
+            
+            const isActive = daysRemaining > 0;
+            const statusColor = isActive ? '#4CAF50' : '#f44336';
+            const statusBg = isActive ? '#d4edda' : '#ffebee';
+            const statusText = isActive ? `✓ ACTIVE - ${daysRemaining} days remaining` : '❌ EXPIRED';
+            const statusEmoji = isActive ? '✓' : '❌';
+
+            result.style.display = 'block';
+            result.innerHTML = `
+                <div style="background: #f9f9f9; border: 2px solid ${statusColor}; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: 700; color: #333;">🎁 Warranty Details</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 3px;">Serial: ${warranty.serial_number}</div>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 600; color: white; background: ${statusColor}; padding: 12px 20px; border-radius: 20px;">
+                            ${statusEmoji} ${statusText}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #667eea;">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">📦 Product</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #333;">${warranty.product?.name || 'N/A'}</div>
+                            <div style="font-size: 12px; color: #666; margin-top: 3px;">Model: ${warranty.product?.model || 'N/A'}</div>
+                        </div>
+
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #667eea;">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">👤 Customer</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #333;">${warranty.customer?.name || 'N/A'}</div>
+                            <div style="font-size: 12px; color: #666; margin-top: 3px;">📧 ${warranty.customer?.email || 'N/A'}</div>
+                        </div>
+
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #2196F3;">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">📅 Start Date</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #333;">${new Date(warranty.warranty_start_date).toLocaleDateString()}</div>
+                        </div>
+
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid ${statusColor};">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">📅 Expiry Date</div>
+                            <div style="font-size: 16px; font-weight: 600; color: ${statusColor};">${new Date(warranty.warranty_end_date).toLocaleDateString()}</div>
+                        </div>
+
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #FF9800;">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">⏱️ Duration</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #333;">${warranty.warranty_duration_months} Months</div>
+                        </div>
+
+                        <div style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #4CAF50;">
+                            <div style="font-size: 12px; color: #999; text-transform: uppercase; margin-bottom: 5px;">💰 Purchase Price</div>
+                            <div style="font-size: 16px; font-weight: 600; color: #333;">${warranty.currency || 'USD'} ${warranty.purchase_price ? parseFloat(warranty.purchase_price).toFixed(2) : '0.00'}</div>
+                        </div>
+                    </div>
+
+                    <div style="background: ${statusBg}; border: 1px solid ${statusColor}; padding: 15px; border-radius: 5px; color: ${statusColor >= 0 ? '#1b5e20' : '#c62828'};">
+                        <strong>Warranty Status:</strong> ${isActive ? `This product is under warranty until ${new Date(warranty.warranty_end_date).toLocaleDateString()}` : 'This warranty has expired and is no longer valid'}
+                    </div>
+                </div>
+            `;
+
+            showAlert('warranty-alerts', `✓ Warranty found for serial: ${warranty.serial_number}`, 'success');
+        }
+
+        // ===== PRODUCT SEARCH FUNCTIONS =====
+        async function searchProducts() {
+            const query = document.getElementById('productSearchQuery').value.trim();
+            const category = document.getElementById('productCategory').value;
+
+            if (!query && !category) {
+                showAlert('product-alerts', '⚠️ Please enter a search term or select a category', 'warning');
+                return;
+            }
+
+            try {
+                let url = `${API_BASE}/product/search`;
+                const params = new URLSearchParams();
+                
+                if (query) params.append('q', query);
+                if (category) params.append('category', category);
+                
+                url += '?' + params.toString();
+                
+                const res = await fetch(url);
+                
+                if (!res.ok) {
+                    throw new Error('Product search failed');
+                }
+
+                const data = await res.json();
+                displayProductResults(data.products, data.count);
+            } catch (error) {
+                console.error('Product search error:', error);
+                showAlert('product-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        function displayProductResults(products, count) {
+            const resultsDiv = document.getElementById('product-results');
+            
+            if (count === 0) {
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = `
+                    <div style="background: #fff3e0; border: 2px solid #FF9800; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                        <div style="font-size: 24px; font-weight: 700; color: #FF9800; margin-bottom: 10px;">🔍 No Results</div>
+                        <p style="color: #F57C00; margin: 5px 0;">No products found matching your search criteria.</p>
+                        <p style="color: #999; margin-top: 15px; font-size: 14px;">Try searching with different keywords or select a different category.</p>
+                    </div>
+                `;
+                showAlert('product-alerts', `No products found`, 'warning');
+                return;
+            }
+
+            let resultsHTML = `<div style="margin-top: 20px;">`;
+            
+            products.forEach(product => {
+                const warrantyStatus = product.active_warranties > 0 ? 
+                    `<span style="color: #4CAF50;">✓ ${product.active_warranties} active</span>` : 
+                    `<span style="color: #999;">No active warranties</span>`;
+                
+                resultsHTML += `
+                    <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 18px; font-weight: 700; color: #333; margin-bottom: 5px;">${product.name}</div>
+                            <div style="color: #666; font-size: 14px; margin-bottom: 3px;">📦 Model: ${product.model || 'N/A'}</div>
+                            <div style="color: #666; font-size: 14px; margin-bottom: 3px;">🏭 Manufacturer: ${product.manufacturer || 'N/A'}</div>
+                            <div style="color: #666; font-size: 14px; margin-bottom: 8px;">📂 Category: ${product.category || 'N/A'}</div>
+                            <div style="background: #f0f8ff; padding: 10px; border-radius: 5px; font-size: 13px; color: #0066cc; margin-top: 10px;">
+                                📊 Total Sold: <strong>${product.total_sold}</strong> | 📋 Warranty Active: ${warrantyStatus}
+                            </div>
+                        </div>
+                        <div style="margin-left: 20px; text-align: right; flex: 0.3;">
+                            <button onclick="selectProductForInvoice('${product.id}', '${product.name}')" 
+                                style="background: #667eea; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                                ➕ Add to Invoice
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += `</div>`;
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = resultsHTML;
+            
+            showAlert('product-alerts', `✓ Found ${count} product${count !== 1 ? 's' : ''}`, 'success');
+        }
+
+        function selectProductForInvoice(productId, productName) {
+            // Scroll to invoice creation section
+            document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+            
+            // Focus on product name/ID for manual entry
+            document.getElementById('customerName').focus();
+            
+            showAlert('invoice-alerts', `📦 Ready to add "${productName}" to invoice. Fill in customer details first.`, 'info');
+        }
+
+        // ===== PRODUCT MANAGEMENT FUNCTIONS =====
+        let editingProductId = null;
+
+        async function loadProducts() {
+            try {
+                const res = await fetch(`${API_BASE}/product`);
+                if (!res.ok) throw new Error('Failed to load products');
+
+                const products = await res.json();
+                displayProductsList(products);
+            } catch (error) {
+                console.error('Load products error:', error);
+                showAlert('product-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        function displayProductsList(products) {
+            const container = document.getElementById('products-list');
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📦</div>
+                        <p data-en="No products found. Add your first product!" data-km="រកមិនឃើញផលិតផល។ បន្ថែមផលិតផលដំបូងរបស់អ្នក!"></p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<div style="display: grid; gap: 15px;">`;
+
+            products.forEach(product => {
+                const price = product.sale_price || product.base_price || 0;
+                const currency = product.currency || 'USD';
+                const stockStatus = product.stock_quantity <= (product.min_stock_level || 0) ?
+                    '<span style="color: #f44336;">⚠️ Low Stock</span>' :
+                    '<span style="color: #4CAF50;">✓ In Stock</span>';
+
+                html += `
+                    <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                                <h4 style="margin: 0; color: #333;">${product.name}</h4>
+                                <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;">${product.category || 'No Category'}</span>
+                                ${product.is_active ? '' : '<span style="background: #f44336; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;">Inactive</span>'}
+                            </div>
+                            <div style="color: #666; font-size: 14px; margin-bottom: 8px;">
+                                📦 Model: ${product.model} | 🏭 ${product.manufacturer || 'N/A'} | 📊 ${stockStatus}
+                            </div>
+                            <div style="color: #666; font-size: 14px;">
+                                💰 Price: ${currency} ${price.toFixed(2)} | 📦 Stock: ${product.stock_quantity || 0} | 🔧 Warranty: ${product.default_warranty_months || 0} months
+                            </div>
+                            ${product.sku ? `<div style="color: #999; font-size: 12px; margin-top: 5px;">SKU: ${product.sku}</div>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button onclick="editProduct('${product.id}')" style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="deleteProduct('${product.id}', '${product.name}')" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function showAddProductForm() {
+            editingProductId = null;
+            document.getElementById('form-title').innerHTML = '<span data-en="Add New Product" data-km="បន្ថែមផលិតផលថ្មី"></span>';
+            clearProductForm();
+            document.getElementById('product-form').style.display = 'block';
+            document.getElementById('productName').focus();
+        }
+
+        function hideProductForm() {
+            document.getElementById('product-form').style.display = 'none';
+            clearProductForm();
+            editingProductId = null;
+        }
+
+        function clearProductForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productModel').value = '';
+            document.getElementById('productSKU').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productManufacturer').value = '';
+            document.getElementById('productStock').value = '';
+            document.getElementById('productBasePrice').value = '';
+            document.getElementById('productSalePrice').value = '';
+            document.getElementById('productCostPrice').value = '';
+            document.getElementById('productCurrency').value = 'USD';
+            document.getElementById('productWarranty').value = '12';
+            document.getElementById('productDescription').value = '';
+        }
+
+        async function saveProduct() {
+            const saveButton = document.querySelector('#product-form button[onclick="saveProduct()"]');
+
+            const data = {
+                name: document.getElementById('productName').value.trim(),
+                model: document.getElementById('productModel').value.trim(),
+                sku: document.getElementById('productSKU').value.trim(),
+                category: document.getElementById('productCategory').value,
+                manufacturer: document.getElementById('productManufacturer').value.trim(),
+                stock_quantity: parseInt(document.getElementById('productStock').value) || 0,
+                base_price: parseFloat(document.getElementById('productBasePrice').value) || null,
+                sale_price: parseFloat(document.getElementById('productSalePrice').value) || null,
+                cost_price: parseFloat(document.getElementById('productCostPrice').value) || null,
+                currency: document.getElementById('productCurrency').value,
+                default_warranty_months: parseInt(document.getElementById('productWarranty').value) || 12,
+                description: document.getElementById('productDescription').value.trim(),
+                is_active: true
+            };
+
+            if (!data.name || !data.model) {
+                showToast('⚠️ Product name and model are required', 'warning');
+                return;
+            }
+
+            // Set loading state
+            setLoading(saveButton, true);
+            showToast('🔄 Saving product...', 'info');
+
+            try {
+                let url = `${API_BASE}/product`;
+                let method = 'POST';
+
+                if (editingProductId) {
+                    url += `/${editingProductId}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Failed to save product');
+                }
+
+                const result = await res.json();
+
+                showToast(`✅ Product ${editingProductId ? 'updated' : 'created'} successfully: ${result.product.name}`, 'success');
+                hideProductForm();
+                loadProducts();
+
+            } catch (error) {
+                console.error('Save product error:', error);
+                showToast(`❌ ${error.message}`, 'error');
+            } finally {
+                // Reset loading state
+                setLoading(saveButton, false);
+            }
+        }
+
+        async function editProduct(productId) {
+            try {
+                const res = await fetch(`${API_BASE}/product/${productId}`);
+                if (!res.ok) throw new Error('Failed to load product');
+
+                const product = await res.json();
+
+                // Populate form
+                document.getElementById('productName').value = product.name || '';
+                document.getElementById('productModel').value = product.model || '';
+                document.getElementById('productSKU').value = product.sku || '';
+                document.getElementById('productCategory').value = product.category || '';
+                document.getElementById('productManufacturer').value = product.manufacturer || '';
+                document.getElementById('productStock').value = product.stock_quantity || '';
+                document.getElementById('productBasePrice').value = product.base_price || '';
+                document.getElementById('productSalePrice').value = product.sale_price || '';
+                document.getElementById('productCostPrice').value = product.cost_price || '';
+                document.getElementById('productCurrency').value = product.currency || 'USD';
+                document.getElementById('productWarranty').value = product.default_warranty_months || '12';
+                document.getElementById('productDescription').value = product.description || '';
+
+                editingProductId = productId;
+                document.getElementById('form-title').innerHTML = '<span data-en="Edit Product" data-km="កែសម្រួលផលិតផល"></span>';
+                document.getElementById('product-form').style.display = 'block';
+
+            } catch (error) {
+                console.error('Edit product error:', error);
+                showAlert('product-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteProduct(productId, productName) {
+            if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/product/${productId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Failed to delete product');
+                }
+
+                showAlert('product-alerts', `✓ Product deleted: ${productName}`, 'success');
+                loadProducts();
+
+            } catch (error) {
+                console.error('Delete product error:', error);
+                showAlert('product-alerts', `❌ ${error.message}`, 'error');
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Load data for specific tabs
+            if (tabName === 'manage-products') {
+                loadProducts();
+            } else if (tabName === 'create-invoice') {
+                loadProductsForInvoice().then(() => {
+                    // Re-render line items to update product dropdowns
+                    renderLineItems();
+                });
+            }
+        }
+
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            loadDashboard();
+            loadInvoices();
+        }, 30000);
+
+        // ===== LANGUAGE TRANSLATION SYSTEM =====
+        const currentLanguage = localStorage.getItem('uiLanguage') || 'en';
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('uiLanguage').value = currentLanguage;
+            applyLanguage(currentLanguage);
+        });
+
+        function changeUILanguage(lang) {
+            localStorage.setItem('uiLanguage', lang);
+            applyLanguage(lang);
+        }
+
+        function applyLanguage(lang) {
+            // Update all elements with data-en/data-km attributes
+            document.querySelectorAll('[data-en][data-km]').forEach(element => {
+                if (element.tagName === 'LABEL' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'H3' || element.tagName === 'H4' || element.tagName === 'P' || element.tagName === 'SPAN') {
+                    element.textContent = element.dataset[lang] || element.dataset.en;
+                } else if (element.tagName === 'BUTTON') {
+                    // For buttons with span children
+                    const span = element.querySelector('span[data-en]');
+                    if (span) {
+                        span.textContent = span.dataset[lang] || span.dataset.en;
+                    } else {
+                        // For buttons with direct text
+                        const hasChildren = element.hasChildNodes();
+                        if (!hasChildren || (hasChildren && element.childNodes[0].nodeType === 3)) {
+                            element.textContent = element.dataset[lang] || element.dataset.en;
+                        }
+                    }
+                }
+            });
+
+            // Update option elements
+            document.querySelectorAll('option[data-en]').forEach(option => {
+                option.textContent = option.dataset[lang] || option.dataset.en;
+            });
+
+            // Update document language attribute
+            document.documentElement.lang = lang;
+        }
+
+        // Helper: Get current language
+        function getCurrentLanguage() {
+            return localStorage.getItem('uiLanguage') || 'en';
+        }
+
+        // Open Settings Page
+        function openSettings() {
+            window.open('/settings', '_blank', 'width=1200, height=800');
+        }
+
+        // Open Template Preview
+        function openTemplatePreview() {
+            window.open('/preview', 'templatePreview', 'width=1400, height=900');
+        }
+
+        // Auto-hide menu bar on scroll
+        let lastScrollTop = 0;
+        const menuBar = document.getElementById('menu-bar');
+
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down and past 100px - hide menu
+                menuBar.classList.add('hidden');
+            } else {
+                // Scrolling up or at top - show menu
+                menuBar.classList.remove('hidden');
+            }
+
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+</body>
+</html>

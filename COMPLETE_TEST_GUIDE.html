@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete System Test Guide - Invoice Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .test-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .phase-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .phase-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .phase-content {
+            padding: 20px;
+        }
+
+        .step {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: #666;
+            margin-left: 38px;
+            margin-top: 5px;
+        }
+
+        .step-check {
+            font-size: 12px;
+            color: #999;
+            margin-left: 38px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .test-flow {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .test-flow h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .flow-box {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .expected-results {
+            background: #e8eaf6;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .expected-results strong {
+            color: #667eea;
+        }
+
+        .verification-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .verification-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .verification-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .verification-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .verification-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-pass {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .status-fail {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .success-banner {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .warning-banner {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .checklist {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .checklist h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .checklist-text {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 40px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d73a49;
+        }
+
+        .note-box {
+            background: #f0f7ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .test-phases {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧪 Complete System Test Guide</h1>
+            <p>Walk-through to verify Settings → Preview → Invoice Creation flow works correctly</p>
+        </div>
+
+        <!-- Test Phases Overview -->
+        <div class="test-phases">
+            <div class="phase-card">
+                <div class="phase-header">⚙️ Phase 1: Settings</div>
+                <div class="phase-content">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Open Settings</span>
+                        <div class="step-description">Click ⚙️ Settings button on Dashboard</div>
+                        <div class="step-check">✓ Settings panel opens in new window</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Edit Company Info</span>
+                        <div class="step-description">Change company name to test name</div>
+                        <div class="step-check">✓ Form accepts input</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Change Colors</span>
+                        <div class="step-description">Update primary color in Branding tab</div>
+                        <div class="step-check">✓ Color picker works</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Save Settings</span>
+                        <div class="step-description">Click ✓ Save button</div>
+                        <div class="step-check">✓ Success message appears</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <div class="phase-header">👁️ Phase 2: Preview</div>
+                <div class="phase-content">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Open Preview</span>
+                        <div class="step-description">Click 👁️ Preview button on Dashboard</div>
+                        <div class="step-check">✓ Template preview opens</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-title">View Settings Display</span>
+                        <div class="step-description">Check settings strip shows your changes</div>
+                        <div class="step-check">✓ Company name and color updated</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Refresh Preview</span>
+                        <div class="step-description">Click 🔄 Refresh Preview button</div>
+                        <div class="step-check">✓ Invoice shows new company name</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Check Color</span>
+                        <div class="step-description">Verify invoice header uses new color</div>
+                        <div class="step-check">✓ Primary color applied to header</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <div class="phase-header">📋 Phase 3: Invoice Creation</div>
+                <div class="phase-content">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Go to Dashboard</span>
+                        <div class="step-description">Return to main Dashboard</div>
+                        <div class="step-check">✓ Dashboard loads successfully</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create Test Invoice</span>
+                        <div class="step-description">Fill in invoice form with test data</div>
+                        <div class="step-check">✓ Form accepts all inputs</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Submit Invoice</span>
+                        <div class="step-description">Click Create Invoice button</div>
+                        <div class="step-check">✓ Success message appears</div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Verify Output</span>
+                        <div class="step-description">Check generated invoice uses settings</div>
+                        <div class="step-check">✓ Invoice shows company name & color</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- End-to-End Flow -->
+        <div class="test-flow">
+            <h2>🔄 Complete End-to-End Flow</h2>
+            
+            <div class="flow-diagram">
+                <div class="flow-box">📋 Dashboard<br><small>Start here</small></div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">⚙️ Settings<br><small>Edit details</small></div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">✓ Save<br><small>Store values</small></div>
+            </div>
+
+            <div class="flow-diagram">
+                <div class="flow-box">👁️ Preview<br><small>See changes</small></div>
+                <div class="flow-arrow">←</div>
+                <div class="flow-box">🔄 Refresh<br><small>Load latest</small></div>
+                <div class="flow-arrow">←</div>
+                <div class="flow-box">📊 Invoice<br><small>Final output</small></div>
+            </div>
+
+            <div class="expected-results">
+                <strong>Expected Result:</strong> Settings changes should flow through all three stages:
+                <br>1. Settings panel accepts edits ✓
+                <br>2. Preview reflects changes immediately ✓
+                <br>3. Generated invoices use updated settings ✓
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Detailed Test Steps -->
+        <div class="checklist">
+            <h3>📝 Step-by-Step Test Instructions</h3>
+
+            <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 10px;">🔧 Test 1: Change Company Name</h4>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 1:</strong> Open DASHBOARD.html and click <code>⚙️ Settings</code> button (top-right)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 2:</strong> In Settings, go to <code>🏢 Company Info</code> tab (first tab)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 3:</strong> Find <code>Company Name</code> field and change it to: <code>"ACME Corporation TEST"</code>
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 4:</strong> Scroll down and click green <code>✓ Save Company Info</code> button
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Expected:</strong> Green success message says "✓ Settings saved successfully!"
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 10px;">🎨 Test 2: Change Primary Color</h4>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 1:</strong> In Settings, click <code>🎨 Branding</code> tab
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 2:</strong> Find <code>Primary Color</code> field with color picker
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 3:</strong> Click the color square and select a different color (e.g., red, green, orange)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 4:</strong> Click green <code>✓ Save Branding</code> button at bottom
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Expected:</strong> Success message appears
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 10px;">👁️ Test 3: View Template Preview</h4>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 1:</strong> In Settings panel, click <code>👁️ View Template Preview</code> button (top-right corner)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 2:</strong> Template Preview window opens showing current settings
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 3:</strong> Look at the settings strip at top:
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Company should show: <code>"ACME Corporation TEST"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Primary Color box should show your new color
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 4:</strong> Look at the sample invoice below:
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Header should say <code>"ACME Corporation TEST"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Header color should be your new color
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Table headers and labels should use your new color
+                </div>
+            </div>
+
+            <div class="note-box">
+                <strong>💡 Tip:</strong> If preview doesn't show changes, click <code>🔄 Refresh Preview</code> button
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 10px;">📄 Test 4: Create Real Invoice</h4>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 1:</strong> Close Template Preview and Settings windows
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 2:</strong> Return to Dashboard (main window)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 3:</strong> Scroll down to <code>Create Invoice</code> form section
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 4:</strong> Fill in the form:
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Customer Name: <code>"Test Customer"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Email: <code>"test@example.com"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Product: <code>"Laptop"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Quantity: <code>"1"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- Unit Price: <code>"1000"</code>
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 5:</strong> Click <code>Create Invoice</code> button
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Expected:</strong> Green success message: "✓ Invoice created successfully!"
+                </div>
+            </div>
+
+            <h4 style="color: #667eea; margin-top: 20px; margin-bottom: 10px;">📋 Test 5: Verify Invoice Output</h4>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 1:</strong> Still on Dashboard, scroll to <code>View Invoices</code> section (below the form)
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 2:</strong> You should see your test invoice in the list
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 3:</strong> Click <code>View</code> button to open the generated invoice
+                </div>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" class="checklist-checkbox">
+                <div class="checklist-text">
+                    <strong>Step 4:</strong> Verify the invoice shows:
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Company name: <code>"ACME Corporation TEST"</code>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Header color: Your new color
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Table headers: Your new color
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Labels and accents: Your new color
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Customer name: "Test Customer"
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Item: "Laptop" with quantity 1 and price 1000
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Tax calculated: Based on your tax rate from settings
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;- ✓ Currency: Your selected currency
+                </div>
+            </div>
+
+            <div class="note-box">
+                <strong>🎉 Success:</strong> If all checks pass, your settings flow is working perfectly!
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Verification Table -->
+        <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h2 style="color: #333; margin-bottom: 20px;">✅ Verification Checklist</h2>
+
+            <table class="verification-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>What to Check</th>
+                        <th>Expected Result</th>
+                        <th style="width: 80px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Settings Panel</strong></td>
+                        <td>Can edit company name</td>
+                        <td>Form accepts text input</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Settings Panel</strong></td>
+                        <td>Can save changes</td>
+                        <td>Success message appears</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Color Picker</strong></td>
+                        <td>Can select color</td>
+                        <td>Color updates and saves</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Local Storage</strong></td>
+                        <td>Settings persist</td>
+                        <td>Refresh page, settings remain</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Template Preview</strong></td>
+                        <td>Shows current settings</td>
+                        <td>Settings strip displays correct values</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Preview Updates</strong></td>
+                        <td>Invoice reflects company name</td>
+                        <td>Company name shows in header</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Preview Updates</strong></td>
+                        <td>Invoice reflects color</td>
+                        <td>Header/tables use new color</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Invoice Creation</strong></td>
+                        <td>Form accepts input</td>
+                        <td>All fields take customer data</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Invoice Creation</strong></td>
+                        <td>API endpoint works</td>
+                        <td>Invoice submits to backend</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Generated Invoice</strong></td>
+                        <td>Uses company settings</td>
+                        <td>Shows company name from settings</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Generated Invoice</strong></td>
+                        <td>Uses brand colors</td>
+                        <td>Header displays color from settings</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Generated Invoice</strong></td>
+                        <td>Uses tax rate</td>
+                        <td>Tax calculates correctly</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Generated Invoice</strong></td>
+                        <td>Uses customer data</td>
+                        <td>Customer name and items appear</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Troubleshooting -->
+        <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h2 style="color: #333; margin-bottom: 20px;">🆘 Troubleshooting</h2>
+
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 10px;">❌ Issue: Settings not saving</h4>
+                <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                    <li>Check browser console for errors (F12)</li>
+                    <li>Make sure all required fields are filled</li>
+                    <li>Try clearing browser cache (Ctrl+Shift+Del)</li>
+                    <li>Close and reopen Settings panel</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 10px;">❌ Issue: Preview doesn't show changes</h4>
+                <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                    <li>Click 🔄 Refresh Preview button</li>
+                    <li>Close preview window and reopen it</li>
+                    <li>Check if settings actually saved (see success message)</li>
+                    <li>Hard refresh page: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 10px;">❌ Issue: Invoice creation fails</h4>
+                <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                    <li>Check backend is running (look for "API" green indicator on Dashboard)</li>
+                    <li>Fill all required fields in the form</li>
+                    <li>Check browser console for error messages</li>
+                    <li>Try reloading Dashboard</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 10px;">❌ Issue: Generated invoice doesn't use settings</h4>
+                <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                    <li>Wait 2-3 seconds after saving settings</li>
+                    <li>Refresh Dashboard page (F5)</li>
+                    <li>Create invoice again</li>
+                    <li>Check settings were actually saved</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="button-group" style="justify-content: center; margin-top: 40px;">
+            <button class="btn btn-primary" onclick="printChecklist()">🖨️ Print Checklist</button>
+            <button class="btn btn-secondary" onclick="window.location.href='DASHBOARD.html'">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        function printChecklist() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

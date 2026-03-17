@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Corporate Style</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', 'Segoe UI', sans-serif; background: #f1f3f5; padding: 20px; color: #2c3e50; }
+        .container { max-width: 600px; margin: 0 auto; background: white; box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .header p { font-size: 12px; opacity: 0.9; }
+        .receipt-info { padding: 30px; background: #f8f9fa; border-bottom: 2px solid #1e3c72; }
+        .info-row { display: flex; justify-content: space-between; font-size: 12px; margin: 8px 0; }
+        .info-label { color: #999; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+        .customer-section { padding: 30px; background: white; border-bottom: 1px solid #e8e8e8; }
+        .customer-section h3 { font-size: 11px; color: #1e3c72; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .customer-section p { font-size: 12px; margin: 3px 0; }
+        .items-table { width: 100%; border-collapse: collapse; padding: 20px; }
+        .items-table thead { background: #f8f9fa; border-top: 2px solid #1e3c72; border-bottom: 2px solid #1e3c72; }
+        .items-table th { padding: 10px; text-align: left; font-size: 10px; font-weight: 700; color: #1e3c72; text-transform: uppercase; }
+        .items-table td { padding: 10px; border-bottom: 1px solid #e8e8e8; font-size: 12px; }
+        .text-right { text-align: right; }
+        .total-section { padding: 20px 30px; background: #f8f9fa; }
+        .total-row { display: flex; justify-content: space-between; font-size: 12px; margin: 8px 0; }
+        .total-row.total { font-weight: 700; font-size: 14px; color: #1e3c72; border-top: 2px solid #1e3c72; padding-top: 8px; margin-top: 8px; }
+        .footer { text-align: center; padding: 20px; background: #2c3e50; color: white; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RECEIPT</h1>
+            <p>{{ company_name }}</p>
+        </div>
+        
+        <div class="receipt-info">
+            <div class="info-row"><span class="info-label">Receipt #</span> {{ receipt_number }}</div>
+            <div class="info-row"><span class="info-label">Date</span> {{ receipt_date }}</div>
+            <div class="info-row"><span class="info-label">Time</span> {{ receipt_time }}</div>
+        </div>
+        
+        <div class="customer-section">
+            <h3>Customer</h3>
+            <p><strong>{{ customer_name }}</strong></p>
+            <p>{{ customer_email }}</p>
+            <p>{{ customer_phone }}</p>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-right" style="width: 60px;">Qty</th>
+                    <th class="text-right" style="width: 80px;">Price</th>
+                    <th class="text-right" style="width: 80px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.price | currency }}</td>
+                    <td class="text-right">{{ item.amount | currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="total-section">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>{{ subtotal | currency }}</span>
+            </div>
+            <div class="total-row">
+                <span>Tax</span>
+                <span>{{ tax | currency }}</span>
+            </div>
+            <div class="total-row total">
+                <span>TOTAL PAID</span>
+                <span>{{ total | currency }}</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Thank you for your business!
+        </div>
+    </div>
+</body>
+</html>

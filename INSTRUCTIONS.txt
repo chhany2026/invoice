@@ -1,0 +1,103 @@
+; Warranty Product Management System - Installation Instructions
+
+This system allows you to globally record warranty products from QR codes or serial numbers.
+
+## What's Included
+
+✅ BACKEND (Flask + PostgreSQL/SQLite)
+   - Complete REST API with 12+ endpoints
+   - Database models for Warranties, Products, Customers
+   - QR code generation and validation
+   - Support for both cloud and local deployment
+
+✅ FRONTEND (PyQt6 Desktop Application)
+   - QR code camera scanning
+   - Manual serial number input
+   - Warranty management interface
+   - Product and customer management
+   - Real-time search functionality
+
+✅ DOCUMENTATION
+   - README.md - Project overview and quick start
+   - DEPLOYMENT.md - Production deployment guide
+   - API_DOCUMENTATION.md - Complete API reference
+   - PROJECT_INFO.md - Project information and roadmap
+
+✅ SETUP SCRIPTS
+   - setup.bat (Windows)
+   - setup.sh (Linux/macOS)
+   - docker-compose.yml (Docker deployment)
+
+## Quick Start (Windows)
+
+1. Double-click: setup.bat
+2. Wait for setup to complete
+3. Open two terminal windows:
+   
+   Terminal 1:
+   cd backend
+   venv\Scripts\activate.bat
+   python run.py
+   
+   Terminal 2:
+   cd frontend
+   venv\Scripts\activate.bat
+   python main.py
+
+4. Warranty app opens automatically!
+
+## Quick Start (Linux/macOS)
+
+1. Run: bash setup.sh
+2. Open two terminal windows and run:
+   
+   Terminal 1:
+   cd backend
+   source venv/bin/activate
+   python run.py
+   
+   Terminal 2:
+   cd frontend
+   source venv/bin/activate
+   python main.py
+
+## Docker Deployment
+
+docker-compose up -d
+
+This starts both the database and backend on localhost:5000
+
+## Key Files
+
+/backend
+  ├── app/__init__.py       - Flask app factory
+  ├── app/models.py         - Database models
+  ├── app/routes.py         - API endpoints
+  ├── app/config.py         - Configuration
+  ├── run.py                - Entry point
+  ├── requirements.txt      - Python packages
+  └── Dockerfile            - Docker image
+
+/frontend
+  ├── main.py               - Application entry point
+  ├── main_window.py        - Main UI window
+  ├── qr_scanner.py         - QR scanner module
+  ├── dialogs.py            - CRUD dialogs
+  ├── api_client.py         - API client
+  └── requirements.txt      - Python packages
+
+## Next Steps
+
+1. Read README.md for detailed overview
+2. Review DEPLOYMENT.md for production setup
+3. Check API_DOCUMENTATION.md for API details
+4. Start creating your warranty records!
+
+## Support
+
+For issues, check:
+- README.md Troubleshooting section
+- DEPLOYMENT.md for deployment issues
+- API_DOCUMENTATION.md for API errors
+
+Happy warranty management!

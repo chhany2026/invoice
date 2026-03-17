@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្របង្រួមទំនើប</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Khmer OS', 'Khmer OS Siemreap', 'Khmer OS Muol', 'Khmer OS Battambang', 'Khmer OS Content', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-button {
+                display: none !important;
+            }
+        }
+
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .receipt-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .company-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .receipt-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .receipt-header p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin: 2px 0;
+        }
+
+        .receipt-body {
+            padding: 25px 20px;
+        }
+
+        .receipt-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 12px;
+            background: #667eea;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .receipt-info {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .items-section {
+            margin-bottom: 20px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .item-meta {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .item-price {
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .totals-section {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .total-row.final {
+            border-top: 2px solid #667eea;
+            padding-top: 12px;
+            margin-top: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .total-label {
+            color: #666;
+        }
+
+        .total-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payment-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #856404;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .payment-details {
+            font-size: 12px;
+            color: #856404;
+            line-height: 1.4;
+        }
+
+        .receipt-footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: #6c757d;
+            margin: 3px 0;
+        }
+
+        .print-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .print-button:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .qr-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="receipt-header">
+            <div class="company-logo">
+                <img src="{{ company_logo or '' }}" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <span style="display: none;">🏢</span>
+            </div>
+            <h1>{{ company_name or 'ឈ្មោះក្រុមហ៊ុន' }}</h1>
+            <p>{{ company_address or 'អាសយដ្ឋានក្រុមហ៊ុន' }}</p>
+            <p>{{ company_phone or '+855-23-456-789' }}</p>
+            <p>{{ company_email or 'info@company.com' }}</p>
+        </div>
+
+        <!-- Body -->
+        <div class="receipt-body">
+            <!-- Receipt Info -->
+            <div class="receipt-section">
+                <div class="section-title">ព័ត៌មានវិក័យប័ត្របង្រួម</div>
+                <div class="receipt-info">
+                    <div class="info-row">
+                        <span class="info-label">លេខវិក័យប័ត្របង្រួម</span>
+                        <span class="info-value">{{ receipt_number or 'វិក័យប័ត្របង្រួម-២០២៤-០០០១' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">កាលបរិច្ឆេទ</span>
+                        <span class="info-value">{{ receipt_date or '០១ មករា ២០២៤' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">លេខវិក័យប័ត្រ</span>
+                        <span class="info-value">{{ invoice_number or 'វិក័យប័ត្រ-២០២៤-០០០១' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="receipt-section">
+                <div class="section-title">អតិថិជន</div>
+                <div class="receipt-info">
+                    <div class="info-row">
+                        <span class="info-label">ឈ្មោះ</span>
+                        <span class="info-value">{{ customer_name or 'ឈ្មោះអតិថិជន' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ទូរស័ព្ទ</span>
+                        <span class="info-value">{{ customer_phone or '+855-12-345-678' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="items-section">
+                <div class="section-title">ផលិតផលដែលបានទិញ</div>
+                {% for item in line_items %}
+                <div class="item-row">
+                    <div class="item-details">
+                        <div class="item-name">{{ item.description or 'ឈ្មោះផលិតផល' }}</div>
+                        {% if item.serial_number %}
+                        <div class="item-meta">លេខស៉ែរៀល: {{ item.serial_number }}</div>
+                        {% endif %}
+                        <div class="item-meta">បរិមាណ: {{ item.quantity or 1 }}</div>
+                    </div>
+                    <div class="item-price">{{ currency or '៛' }}{{ "%.0f"|format(item.line_total or 0) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="total-row">
+                    <span class="total-label">សរុបរង</span>
+                    <span class="total-value">{{ currency or '៛' }}{{ "%.0f"|format(subtotal or 0) }}</span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">ពន្ធ</span>
+                    <span class="total-value">{{ currency or '៛' }}{{ "%.0f"|format(tax_amount or 0) }}</span>
+                </div>
+                <div class="total-row final">
+                    <span class="total-label">ចំនួនបង់សរុប</span>
+                    <span class="total-value">{{ currency or '៛' }}{{ "%.0f"|format(amount_paid or 0) }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Info -->
+            <div class="payment-section">
+                <div class="payment-title">ព័ត៌មានការបង់ប្រាក់</div>
+                <div class="payment-details">
+                    <strong>វិធីសាស្ត្រ:</strong> {{ payment_method or 'លុយសម្ភារៈ' }}<br>
+                    <strong>ស្ថានភាព:</strong> {{ payment_status or 'បានបញ្ចប់' }}<br>
+                    {% if transaction_id %}
+                    <strong>លេខប្រតិបត្តិការ:</strong> {{ transaction_id }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            {% if qr_code %}
+            <div class="qr-section">
+                <div class="qr-code">
+                    <img src="{{ qr_code }}" alt="QR Code" />
+                </div>
+                <p style="font-size: 10px; color: #666; margin-top: 5px;">ស្កេនដើម្បីទទួលវិក័យប័ត្រឌីជីថល</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="receipt-footer">
+            <div class="footer-text"><strong>{{ company_name or 'ឈ្មោះក្រុមហ៊ុន' }}</strong></div>
+            <div class="footer-text">សូមអរគុណចំពោះការប្រើប្រាស់សេវាកម្មរបស់យើង!</div>
+            {% if company_website %}
+            <div class="footer-text">{{ company_website }}</div>
+            {% endif %}
+            <button class="print-button no-print" onclick="window.print()">🖨️ បោះពុម្ពវិក័យប័ត្របង្រួម</button>
+        </div>
+    </div>
+</body>
+</html></content>
+<parameter name="filePath">d:\Coding Folder\sola project\Warranty Product\RECEIPT_TEMPLATE_MODERN_KM.html

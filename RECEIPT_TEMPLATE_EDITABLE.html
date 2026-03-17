@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Receipt Template</title>
+    <style>
+        /*
+        ============================================================================
+        CUSTOMIZATION GUIDE FOR RECEIPT:
+        ============================================================================
+        
+        1. PRIMARY COLOR: Change #667eea to your brand color
+           
+        2. RECEIPT WIDTH: Default 400px (58-80mm thermal printer)
+           - Change .receipt-container max-width for wider paper
+           
+        3. COMPANY DETAILS: Edit company name, address, contact in HTML
+           
+        4. FOOTER MESSAGE: Change "Thank you!" and exit message
+           
+        5. THERMAL PRINTER FORMAT: Already optimized for thermal printing
+           - Monospace font for alignment
+           - Dashed lines for separation
+           - Compact spacing
+           
+        ============================================================================
+        */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Lucida Console', monospace;
+            background: white;
+            color: #333;
+        }
+
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .print-button { display: none !important; }
+        }
+
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+
+        .receipt {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* ========== HEADER ========== */
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-logo {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .receipt-header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #667eea;
+            letter-spacing: 1px;
+        }
+
+        .receipt-header p {
+            font-size: 11px;
+            color: #666;
+            margin: 3px 0;
+            line-height: 1.5;
+        }
+
+        .receipt-divider {
+            border-bottom: 1px dashed #667eea;
+            margin: 10px 0;
+        }
+
+        .receipt-divider-heavy {
+            border-bottom: 2px dashed #667eea;
+            margin: 15px 0;
+        }
+
+        /* ========== RECEIPT NUMBER & DATE ========== */
+        .receipt-meta {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .receipt-number {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .receipt-datetime {
+            color: #999;
+        }
+
+        /* ========== CUSTOMER SECTION ========== */
+        .customer-section {
+            font-size: 12px;
+            margin: 10px 0;
+        }
+
+        .customer-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .customer-contact {
+            font-size: 11px;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        /* ========== ITEMS SECTION ========== */
+        .receipt-section-title {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 12px 0 8px 0;
+            color: #667eea;
+        }
+
+        .receipt-item {
+            font-size: 11px;
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+
+        .item-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+
+        .item-name-text {
+            flex: 1;
+        }
+
+        .item-name-price {
+            text-align: right;
+            font-weight: bold;
+            color: #667eea;
+            margin-left: 10px;
+        }
+
+        .item-qty {
+            font-size: 10px;
+            color: #666;
+            padding-left: 5px;
+        }
+
+        .item-serial {
+            font-size: 10px;
+            color: #999;
+            padding-left: 5px;
+        }
+
+        /* ========== TOTALS ========== */
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin: 5px 0;
+        }
+
+        .amount-label {
+            flex: 1;
+        }
+
+        .amount-value {
+            text-align: right;
+            min-width: 70px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-top: 1px solid #667eea;
+            border-bottom: 1px solid #667eea;
+        }
+
+        .total-label {
+            flex: 1;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .total-value {
+            text-align: right;
+            min-width: 70px;
+            color: #667eea;
+        }
+
+        /* ========== PAYMENT SECTION ========== */
+        .payment-section {
+            margin: 12px 0;
+            font-size: 11px;
+        }
+
+        .payment-method-label {
+            font-weight: bold;
+            font-size: 11px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .payment-detail {
+            font-size: 10px;
+            color: #666;
+            margin: 2px 0;
+            word-break: break-all;
+        }
+
+        .payment-status {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            padding: 6px;
+            margin: 8px 0;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 3px;
+        }
+
+        /* ========== WARRANTY SECTION ========== */
+        .warranty-section {
+            background: #f0f8e0;
+            padding: 8px;
+            border-radius: 3px;
+            margin: 10px 0;
+            font-size: 10px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .warranty-section h4 {
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 4px;
+            color: #2e7d32;
+            text-transform: uppercase;
+        }
+
+        .warranty-section p {
+            margin: 3px 0;
+            color: #2e7d32;
+            line-height: 1.4;
+        }
+
+        /* ========== QR CODES ========== */
+        .qr-code-section {
+            text-align: center;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .qr-code-label {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .qr-code-img {
+            max-width: 120px;
+            max-height: 120px;
+            margin: 5px auto;
+        }
+
+        .qr-code-img img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* ========== FOOTER ========== */
+        .thank-you {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 15px 0;
+            letter-spacing: 1px;
+            color: #667eea;
+            text-transform: uppercase;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .footer-meta {
+            text-align: center;
+            font-size: 9px;
+            color: #999;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .receipt-end {
+            border-bottom: 2px dashed #667eea;
+            margin-top: 15px;
+            padding-top: 15px;
+            text-align: center;
+            font-size: 8px;
+            color: #bbb;
+        }
+
+        /* ========== PRINT STYLES ========== */
+        .no-print {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .print-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .print-button:hover {
+            background: #5568d3;
+        }
+
+        @media (max-width: 500px) {
+            .receipt-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .receipt {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .receipt-header h1 {
+                font-size: 16px;
+            }
+
+            .receipt-header p {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button class="print-button" onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="receipt">
+            <!-- ================================================ -->
+            <!-- HEADER: COMPANY LOGO & DETAILS -->
+            <!-- ================================================ -->
+            <div class="receipt-header">
+                <div class="receipt-logo">🧾</div>
+                <h1>{{ company_name }}</h1>
+                {% if company_address %}<p>{{ company_address }}</p>{% endif %}
+                {% if company_city %}<p>{{ company_city }}</p>{% endif %}
+                {% if company_phone %}<p>☎ {{ company_phone }}</p>{% endif %}
+                {% if company_email %}<p>📧 {{ company_email }}</p>{% endif %}
+            </div>
+
+            <!-- ================================================ -->
+            <!-- RECEIPT NUMBER & DATE/TIME -->
+            <!-- ================================================ -->
+            <div class="receipt-meta">
+                <div class="receipt-number">RECEIPT #{{ receipt_number }}</div>
+                <div class="receipt-datetime">{{ receipt_date }} | {{ receipt_time }}</div>
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <!-- ================================================ -->
+            <!-- CUSTOMER INFORMATION -->
+            <!-- ================================================ -->
+            {% if customer_name %}
+                <div class="customer-section">
+                    <div class="customer-name">{{ customer_name }}</div>
+                    {% if customer_email %}<div class="customer-contact">📧 {{ customer_email }}</div>{% endif %}
+                    {% if customer_phone %}<div class="customer-contact">☎ {{ customer_phone }}</div>{% endif %}
+                </div>
+                <div class="receipt-divider"></div>
+            {% endif %}
+
+            <!-- ================================================ -->
+            <!-- ITEMS SECTION -->
+            <!-- ================================================ -->
+            <div class="receipt-section-title">Items</div>
+            {% for item in items %}
+                <div class="receipt-item">
+                    <div class="item-name">
+                        <div class="item-name-text">{{ item.description }}</div>
+                        <div class="item-name-price">{{ currency }} {{ "%.2f"|format(item.line_total) }}</div>
+                    </div>
+                    <div class="item-qty">{{ item.quantity }}x @ {{ currency }} {{ "%.2f"|format(item.unit_price) }}</div>
+                    {% if item.serial_number %}
+                        <div class="item-serial">SN: {{ item.serial_number }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="receipt-divider"></div>
+
+            <!-- ================================================ -->
+            <!-- TOTALS SECTION -->
+            <!-- ================================================ -->
+            <div class="amount-row">
+                <span class="amount-label">Subtotal:</span>
+                <span class="amount-value">{{ currency }} {{ "%.2f"|format(subtotal) }}</span>
+            </div>
+
+            {% if tax_amount %}
+                <div class="amount-row">
+                    <span class="amount-label">Tax:</span>
+                    <span class="amount-value">{{ currency }} {{ "%.2f"|format(tax_amount) }}</span>
+                </div>
+            {% endif %}
+
+            {% if discount_amount %}
+                <div class="amount-row">
+                    <span class="amount-label">Discount:</span>
+                    <span class="amount-value">-{{ currency }} {{ "%.2f"|format(discount_amount) }}</span>
+                </div>
+            {% endif %}
+
+            {% if shipping_cost %}
+                <div class="amount-row">
+                    <span class="amount-label">Shipping:</span>
+                    <span class="amount-value">{{ currency }} {{ "%.2f"|format(shipping_cost) }}</span>
+                </div>
+            {% endif %}
+
+            <div class="total-row">
+                <span class="total-label">Total</span>
+                <span class="total-value">{{ currency }} {{ "%.2f"|format(grand_total) }}</span>
+            </div>
+
+            <!-- ================================================ -->
+            <!-- PAYMENT INFORMATION -->
+            <!-- ================================================ -->
+            {% if payment_method %}
+                <div class="receipt-section-title">Payment</div>
+                <div class="payment-section">
+                    <div class="payment-method-label">{{ payment_method|upper }}</div>
+                    {% if transaction_reference %}
+                        <div class="payment-detail">Ref: {{ transaction_reference }}</div>
+                    {% endif %}
+                    {% if cash_currency %}
+                        <div class="payment-detail">Currency: {{ cash_currency }}</div>
+                    {% endif %}
+                </div>
+                {% if payment_status %}
+                    <div class="payment-status">{{ payment_status|upper }}</div>
+                {% endif %}
+            {% endif %}
+
+            <!-- ================================================ -->
+            <!-- WARRANTY INFORMATION -->
+            <!-- ================================================ -->
+            {% if warranty_items %}
+                <div class="warranty-section">
+                    <h4>✅ Warranty Info</h4>
+                    {% for item in warranty_items %}
+                        <p>{{ item.product }}<br>
+                        Duration: {{ item.warranty_duration }}mo<br>
+                        Valid: {{ item.warranty_end_date }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- ================================================ -->
+            <!-- QR CODES FOR WARRANTY & PAYMENT -->
+            <!-- ================================================ -->
+            {% if qr_code %}
+                <div class="qr-code-section">
+                    <div class="qr-code-label">📱 Warranty QR Code</div>
+                    <div class="qr-code-img">
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if khqr_code %}
+                <div class="qr-code-section">
+                    <div class="qr-code-label">💳 KHQR Payment Code</div>
+                    <div class="qr-code-img">
+                        <img src="data:image/png;base64,{{ khqr_code }}" alt="KHQR Code">
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- ================================================ -->
+            <!-- THANK YOU MESSAGE -->
+            <!-- ================================================ -->
+            <div class="thank-you">Thank You!</div>
+
+            {% if footer_text %}
+                <div class="footer-text">
+                    {{ footer_text }}
+                </div>
+            {% else %}
+                <div class="footer-text">
+                    <p>Please visit us again!</p>
+                    <p>Questions? Contact us anytime</p>
+                </div>
+            {% endif %}
+
+            <!-- ================================================ -->
+            <!-- FOOTER METADATA -->
+            <!-- ================================================ -->
+            <div class="footer-meta">
+                <p>Generated: {{ generation_date }}</p>
+                <p>Invoice #{{ invoice_number }}</p>
+                <p>© 2026 {{ company_name }}</p>
+            </div>
+
+            <!-- ================================================ -->
+            <!-- THERMAL PRINTER END MARKER -->
+            <!-- ================================================ -->
+            <div class="receipt-end">- - - - - END OF RECEIPT - - - - -</div>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Auto-print when page loads (comment out if not desired)
+        // window.addEventListener('load', function() {
+        //     window.print();
+        // });
+    </script>
+</body>
+</html>

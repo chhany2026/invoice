@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: warranty_db
+    environment:
+      POSTGRES_USER: warranty_user
+      POSTGRES_PASSWORD: warranty_password_change_me
+      POSTGRES_DB: warranty_product
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U warranty_user -d warranty_product"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: warranty_backend
+    environment:
+      DATABASE_URL: postgresql://warranty_user:warranty_password_change_me@postgres:5432/warranty_product
+      FLASK_ENV: production
+      JWT_SECRET_KEY: change_this_secret_key_in_production
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: python run.py
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: warranty_network

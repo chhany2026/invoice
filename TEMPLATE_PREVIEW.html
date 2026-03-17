@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Preview - Invoice System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+        }
+
+        .settings-strip {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .settings-strip h3 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .setting-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 3px;
+        }
+
+        .preview-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .template-iframe {
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            min-height: 800px;
+        }
+
+        .sample-invoice {
+            background: white;
+            padding: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .invoice-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .company-section {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .company-logo {
+            width: 100px;
+            height: 100px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #ddd;
+            flex-shrink: 0;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .company-contact {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .invoice-info {
+            text-align: right;
+        }
+
+        .invoice-info-row {
+            margin-bottom: 12px;
+        }
+
+        .invoice-info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .invoice-info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .details-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .details-group h4 {
+            font-size: 12px;
+            color: #667eea;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .details-group p {
+            font-size: 14px;
+            color: #333;
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        .items-table thead {
+            background: #f9f9f9;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .items-table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+        }
+
+        .items-table td {
+            padding: 12px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .items-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .summary-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .terms {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .totals-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .totals-row.grand-total {
+            border-top: 2px solid #667eea;
+            padding-top: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #667eea;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .payment-method {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            background: #764ba2;
+        }
+
+        @media print {
+            .header, .controls, .tabs, .settings-strip {
+                display: none;
+            }
+            .preview-container {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        .info-box {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📋 Template Preview</h1>
+        <p>See how your invoices and receipts will look with current settings applied</p>
+        <div class="controls">
+            <select id="templateStyle" onchange="changeTemplateStyle(this.value)" style="padding: 10px 15px; border-radius: 5px; border: 2px solid #667eea; background: white; color: #333; font-weight: 600; font-size: 14px; cursor: pointer; margin-right: 10px;">
+                <optgroup label="Original Templates">
+                    <option value="modern">🎨 Modern Professional</option>
+                    <option value="classic">📜 Classic Business</option>
+                    <option value="minimal">✨ Clean Minimal</option>
+                    <option value="thermal">🖨️ Thermal Receipt</option>
+                </optgroup>
+                <optgroup label="Professional & Formal">
+                    <option value="formal">📋 Formal Business</option>
+                    <option value="corporate">🏢 Corporate Blue</option>
+                    <option value="healthcare">🏥 Healthcare Services</option>
+                </optgroup>
+                <optgroup label="Modern & Creative">
+                    <option value="elegant">💎 Elegant Luxury</option>
+                    <option value="creative">🎨 Creative Agency</option>
+                    <option value="gradient">🌈 Gradient Modern</option>
+                    <option value="startup">🚀 Modern Startup</option>
+                </optgroup>
+                <optgroup label="Commerce & Retail">
+                    <option value="ecommerce">🛍️ E-Commerce Store</option>
+                    <option value="simplistic">✏️ Minimalist Clean</option>
+                    <option value="tech">💻 Tech Startup</option>
+                </optgroup>
+            </select>
+            <button class="btn btn-primary" onclick="refreshPreview()">🔄 Refresh Preview</button>
+            <button class="btn btn-secondary" onclick="openSettings()">⚙️ Edit Settings</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Preview</button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('invoice')">📄 Invoice (English)</button>
+        <button class="tab-btn" onclick="switchTab('receipt')">🧾 Receipt (English)</button>
+        <button class="tab-btn" onclick="switchTab('invoice-km')">📄 Invoice (Khmer)</button>
+        <button class="tab-btn" onclick="switchTab('receipt-km')">🧾 Receipt (Khmer)</button>
+    </div>
+
+    <!-- Settings Display -->
+    <div class="settings-strip">
+        <h3>📌 Current Settings Applied to Preview:</h3>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <span class="setting-label">Company</span>
+                <span class="setting-value" id="settingCompany">Your Company Name</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Primary Color</span>
+                <span class="setting-value" id="settingColor">
+                    <span style="display: inline-block; width: 20px; height: 20px; border-radius: 3px; vertical-align: middle; margin-right: 8px; border: 1px solid #ddd;" id="colorBox"></span>
+                    <span id="colorText">#667eea</span>
+                </span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Tax Rate</span>
+                <span class="setting-value" id="settingTax">10%</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Currency</span>
+                <span class="setting-value" id="settingCurrency">USD</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Container -->
+    <div class="preview-container">
+        <!-- Invoice Preview -->
+        <div id="invoice" class="tab-content active">
+            <div class="sample-invoice" id="invoicePreview">
+                <!-- Generated from template -->
+            </div>
+        </div>
+
+        <!-- Receipt Preview -->
+        <div id="receipt" class="tab-content">
+            <div class="sample-invoice" id="receiptPreview">
+                <!-- Generated from template -->
+            </div>
+        </div>
+
+        <!-- Invoice Khmer Preview -->
+        <div id="invoice-km" class="tab-content">
+            <div class="sample-invoice" id="invoiceKhmerPreview">
+                <!-- Generated from template -->
+            </div>
+        </div>
+
+        <!-- Receipt Khmer Preview -->
+        <div id="receipt-km" class="tab-content">
+            <div class="sample-invoice" id="receiptKhmerPreview">
+                <!-- Generated from template -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'invoiceSettings';
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            return {
+                company: settings.company || {
+                    name: 'Your Company Name',
+                    email: 'info@company.com',
+                    phone: '+855-90-000-000',
+                    website: 'https://www.company.com',
+                    street: '123 Business Street',
+                    city: 'Phnom Penh',
+                    state: 'Phnom Penh',
+                    country: 'Cambodia'
+                },
+                branding: settings.branding || {
+                    primaryColor: '#667eea',
+                    secondaryColor: '#764ba2',
+                    logo: ''
+                },
+                invoice: settings.invoice || {
+                    taxRate: '10',
+                    defaultCurrency: 'USD',
+                    terms: 'Thank you for your business!'
+                },
+                payments: settings.payments || {
+                    cashKHRDetails: 'Cash Payment Available',
+                    abaName: 'ABA Bank',
+                    abaAccount: 'xxx-xxxx-xxx'
+                }
+            };
+        }
+
+        function updateSettingsDisplay() {
+            const settings = loadSettings();
+            document.getElementById('settingCompany').textContent = settings.company.name;
+            document.getElementById('colorBox').style.background = settings.branding.primaryColor;
+            document.getElementById('colorText').textContent = settings.branding.primaryColor;
+            document.getElementById('settingTax').textContent = settings.invoice.taxRate + '%';
+            document.getElementById('settingCurrency').textContent = settings.invoice.defaultCurrency;
+        }
+
+        function generateSampleInvoice(templateStyle = 'modern') {
+            const settings = loadSettings();
+            const companyName = settings.company.name;
+            const color = settings.branding.primaryColor;
+            const taxRate = parseFloat(settings.invoice.taxRate) || 10;
+            const currency = settings.invoice.defaultCurrency;
+            const currencySymbol = getCurrencySymbol(currency);
+
+            const subtotal = 1500;
+            const tax = (subtotal * taxRate / 100).toFixed(2);
+            const total = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
+
+            if (templateStyle === 'classic') {
+                return `
+                    <div style="font-family: 'Times New Roman', serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+                        <div style="border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <div style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">${companyName}</div>
+                                        <div style="font-size: 12px; line-height: 1.5;">
+                                            ${settings.company.street}<br>
+                                            ${settings.company.city}, ${settings.company.state}<br>
+                                            ${settings.company.country}<br>
+                                            Phone: ${settings.company.phone}<br>
+                                            Email: ${settings.company.email}
+                                        </div>
+                                    </td>
+                                    <td style="width: 50%; text-align: right; vertical-align: top;">
+                                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">INVOICE</div>
+                                        <div style="font-size: 12px; margin-bottom: 5px;">Invoice #: INV-2025-0001</div>
+                                        <div style="font-size: 12px; margin-bottom: 5px;">Date: March 14, 2026</div>
+                                        <div style="font-size: 12px;">Due Date: April 13, 2026</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                            <tr>
+                                <td style="width: 50%; vertical-align: top; padding-right: 20px;">
+                                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">BILL TO:</div>
+                                    <div style="font-size: 12px; line-height: 1.5;">
+                                        John Smith<br>
+                                        Tech Solutions Inc.<br>
+                                        123 Main Street<br>
+                                        Phnom Penh, Cambodia
+                                    </div>
+                                </td>
+                                <td style="width: 50%; vertical-align: top;">
+                                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">SHIP TO:</div>
+                                    <div style="font-size: 12px; line-height: 1.5;">
+                                        John Smith<br>
+                                        Tech Solutions Inc.<br>
+                                        123 Main Street<br>
+                                        Phnom Penh, Cambodia
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 30px;">
+                            <thead>
+                                <tr style="background: #f0f0f0;">
+                                    <th style="border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; font-weight: bold;">Description</th>
+                                    <th style="border: 1px solid #000; padding: 8px; text-align: center; font-size: 12px; font-weight: bold;">Qty</th>
+                                    <th style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px; font-weight: bold;">Unit Price</th>
+                                    <th style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px; font-weight: bold;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #000; padding: 8px; font-size: 12px;">Laptop Computer</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center; font-size: 12px;">2</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px;">${currencySymbol}600</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px; font-weight: bold;">${currencySymbol}1,200</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #000; padding: 8px; font-size: 12px;">Software License</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center; font-size: 12px;">1</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px;">${currencySymbol}300</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px; font-weight: bold;">${currencySymbol}300</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 60%; vertical-align: top; padding-right: 20px;">
+                                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">TERMS & CONDITIONS:</div>
+                                    <div style="font-size: 11px; line-height: 1.4;">
+                                        ${settings.invoice.terms || 'Thank you for your business!'}<br><br>
+                                        Payment is due within 30 days from invoice date.
+                                    </div>
+                                </td>
+                                <td style="width: 40%; vertical-align: top;">
+                                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 8px; font-size: 12px;">Subtotal:</td>
+                                            <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px;">${currencySymbol}${subtotal.toLocaleString()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 8px; font-size: 12px;">Tax (${taxRate}%):</td>
+                                            <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 12px;">${currencySymbol}${tax}</td>
+                                        </tr>
+                                        <tr style="background: #f0f0f0;">
+                                            <td style="border: 1px solid #000; padding: 8px; font-size: 12px; font-weight: bold;">TOTAL:</td>
+                                            <td style="border: 1px solid #000; padding: 8px; text-align: right; font-size: 14px; font-weight: bold;">${currencySymbol}${total}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            } else if (templateStyle === 'minimal') {
+                return `
+                    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+                        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+                            <div style="font-size: 24px; font-weight: 300; color: #333; margin-bottom: 5px;">${companyName}</div>
+                            <div style="font-size: 12px; color: #666;">Invoice #INV-2025-0001</div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                            <div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">FROM</div>
+                                <div style="font-size: 14px; color: #333; line-height: 1.4;">
+                                    ${companyName}<br>
+                                    ${settings.company.street}<br>
+                                    ${settings.company.city}, ${settings.company.state}<br>
+                                    ${settings.company.phone}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">TO</div>
+                                <div style="font-size: 14px; color: #333; line-height: 1.4;">
+                                    John Smith<br>
+                                    Tech Solutions Inc.<br>
+                                    Phnom Penh, Cambodia
+                                </div>
+                            </div>
+                        </div>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <th style="padding: 15px 0; text-align: left; font-size: 12px; font-weight: 500; color: #666; text-transform: uppercase;">Description</th>
+                                    <th style="padding: 15px 0; text-align: right; font-size: 12px; font-weight: 500; color: #666; text-transform: uppercase;">Qty</th>
+                                    <th style="padding: 15px 0; text-align: right; font-size: 12px; font-weight: 500; color: #666; text-transform: uppercase;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f9f9f9;">
+                                    <td style="padding: 15px 0; font-size: 14px; color: #333;">Laptop Computer</td>
+                                    <td style="padding: 15px 0; text-align: right; font-size: 14px; color: #333;">2</td>
+                                    <td style="padding: 15px 0; text-align: right; font-size: 14px; color: #333; font-weight: 500;">${currencySymbol}1,200</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f9f9f9;">
+                                    <td style="padding: 15px 0; font-size: 14px; color: #333;">Software License</td>
+                                    <td style="padding: 15px 0; text-align: right; font-size: 14px; color: #333;">1</td>
+                                    <td style="padding: 15px 0; text-align: right; font-size: 14px; color: #333; font-weight: 500;">${currencySymbol}300</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="text-align: right; margin-bottom: 40px;">
+                            <div style="display: inline-block; text-align: left;">
+                                <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                                    <span style="font-size: 14px; color: #666;">Subtotal:</span>
+                                    <span style="font-size: 14px; color: #333; margin-left: 20px;">${currencySymbol}${subtotal.toLocaleString()}</span>
+                                </div>
+                                <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                                    <span style="font-size: 14px; color: #666;">Tax (${taxRate}%):</span>
+                                    <span style="font-size: 14px; color: #333; margin-left: 20px;">${currencySymbol}${tax}</span>
+                                </div>
+                                <div style="padding: 15px 0;">
+                                    <span style="font-size: 16px; color: #333; font-weight: 500;">Total:</span>
+                                    <span style="font-size: 16px; color: #333; font-weight: 500; margin-left: 20px;">${currencySymbol}${total}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; font-size: 12px; color: #666; padding-top: 20px; border-top: 1px solid #eee;">
+                            ${settings.invoice.terms || 'Thank you for your business!'}
+                        </div>
+                    </div>
+                `;
+            } else if (templateStyle === 'thermal') {
+                return `
+                    <div style="font-family: 'Courier New', monospace; max-width: 300px; margin: 0 auto; padding: 10px; font-size: 11px; line-height: 1.2;">
+                        <div style="text-align: center; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 5px;">
+                            <div style="font-size: 14px; font-weight: bold;">${companyName}</div>
+                            <div>${settings.company.street}</div>
+                            <div>${settings.company.city}, ${settings.company.country}</div>
+                            <div>Phone: ${settings.company.phone}</div>
+                        </div>
+
+                        <div style="text-align: center; margin: 10px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0;">
+                            INVOICE #INV-2025-0001<br>
+                            Date: Mar 14, 2026<br>
+                            Due: Apr 13, 2026
+                        </div>
+
+                        <div style="margin: 10px 0;">
+                            BILL TO:<br>
+                            John Smith<br>
+                            Tech Solutions Inc.<br>
+                            Phnom Penh, Cambodia<br>
+                        </div>
+
+                        <div style="margin: 10px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0;">
+                            <div>Laptop Computer.....2 x ${currencySymbol}600 = ${currencySymbol}1,200</div>
+                            <div>Software License.....1 x ${currencySymbol}300 = ${currencySymbol}300</div>
+                        </div>
+
+                        <div style="text-align: right; margin: 10px 0;">
+                            Subtotal: ${currencySymbol}${subtotal.toLocaleString()}<br>
+                            Tax (${taxRate}%): ${currencySymbol}${tax}<br>
+                            <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 5px 0; font-weight: bold; font-size: 12px;">
+                                TOTAL: ${currencySymbol}${total}
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 10px; font-size: 10px;">
+                            ${settings.invoice.terms || 'Thank you for your business!'}<br>
+                            Payment due within 30 days
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Default modern template
+                return `
+                    <div style="border-bottom: 3px solid ${color}; padding-bottom: 20px; margin-bottom: 30px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                                <div style="width: 100px; height: 100px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #ddd;">
+                                    🏢
+                                </div>
+                                <div>
+                                    <div style="font-size: 28px; font-weight: 700; color: ${color}; margin-bottom: 5px;">${companyName}</div>
+                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                        ${settings.company.street}<br>
+                                        ${settings.company.city}, ${settings.company.state}<br>
+                                        ${settings.company.country}<br>
+                                        📧 ${settings.company.email}<br>
+                                        📱 ${settings.company.phone}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: 600;">Invoice Number</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #333;">INV-2025-0001</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: 600;">Invoice Date</div>
+                                    <div style="font-size: 14px; color: #333;">March 14, 2026</div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-size: 12px; color: #999; text-transform: uppercase; font-weight: 600;">Due Date</div>
+                                    <div style="font-size: 14px; color: #333;">April 13, 2026</div>
+                                </div>
+                                <div style="display: inline-block; padding: 8px 16px; background: #d4edda; color: #155724; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px;">
+                                    SAMPLE
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 40px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                            <div>
+                                <h4 style="font-size: 12px; color: ${color}; text-transform: uppercase; font-weight: 600; margin-bottom: 10px;">Bill To</h4>
+                                <p style="font-size: 14px; color: #333; margin: 5px 0; line-height: 1.6;">
+                                    John Smith<br>
+                                    Tech Solutions Inc.<br>
+                                    123 Main Street<br>
+                                    Phnom Penh, Cambodia<br>
+                                    john@techsolutions.com
+                                </p>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 12px; color: ${color}; text-transform: uppercase; font-weight: 600; margin-bottom: 10px;">Ship To</h4>
+                                <p style="font-size: 14px; color: #333; margin: 5px 0; line-height: 1.6;">
+                                    John Smith<br>
+                                    Tech Solutions Inc.<br>
+                                    123 Main Street<br>
+                                    Phnom Penh, Cambodia
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
+                        <thead style="background: #f9f9f9; border-bottom: 2px solid ${color};">
+                            <tr>
+                                <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: ${color}; text-transform: uppercase;">Description</th>
+                                <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${color}; text-transform: uppercase;">Qty</th>
+                                <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${color}; text-transform: uppercase;">Unit Price</th>
+                                <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${color}; text-transform: uppercase;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 12px; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">Laptop Computer</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">2</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">${currencySymbol}600</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee; font-weight: 600;">${currencySymbol}1,200</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">Software License</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">1</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee;">${currencySymbol}300</td>
+                                <td style="padding: 12px; text-align: right; font-size: 14px; color: #333; border-bottom: 1px solid #eee; font-weight: 600;">${currencySymbol}300</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 30px;">
+                        <div>
+                            <h4 style="font-size: 12px; color: ${color}; text-transform: uppercase; font-weight: 600; margin-bottom: 15px;">Terms & Conditions</h4>
+                            <p style="font-size: 12px; color: #666; line-height: 1.6;">
+                                ${settings.invoice.terms || 'Thank you for your business!'}<br>
+                                <br>
+                                Payment is due within 30 days from invoice date. Late payments may incur additional charges as per agreement.
+                            </p>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px;">
+                                <span>Subtotal:</span>
+                                <span>${currencySymbol}${subtotal.toLocaleString()}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px;">
+                                <span>Tax (${taxRate}%):</span>
+                                <span>${currencySymbol}${tax}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 2px solid ${color}; padding-top: 10px; font-weight: 700; font-size: 16px; color: ${color};">
+                                <span>Total:</span>
+                                <span>${currencySymbol}${total}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                        <h4 style="font-size: 12px; color: ${color}; text-transform: uppercase; font-weight: 600; margin-bottom: 10px;">Payment Methods</h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="display: inline-block; padding: 10px 15px; background: #f0f0f0; border-radius: 5px; font-size: 13px; color: #333;">
+                                💵 Cash Payments Accepted
+                            </div>
+                            <div style="display: inline-block; padding: 10px 15px; background: #f0f0f0; border-radius: 5px; font-size: 13px; color: #333;">
+                                🏛️ ${settings.payments.abaName}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+function generateSampleReceipt(templateStyle = 'modern') {
+            const settings = loadSettings();
+            const companyName = settings.company.name;
+            const color = settings.branding.primaryColor;
+            const currency = settings.invoice.defaultCurrency;
+            const currencySymbol = getCurrencySymbol(currency);
+
+            if (templateStyle === 'thermal') {
+                return `
+                    <div style="font-family: 'Courier New', monospace; max-width: 300px; margin: 0 auto; padding: 10px; font-size: 11px; line-height: 1.2;">
+                        <div style="text-align: center; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 5px;">
+                            <div style="font-size: 14px; font-weight: bold;">${companyName}</div>
+                            <div>${settings.company.street}</div>
+                            <div>${settings.company.city}, ${settings.company.country}</div>
+                            <div>Phone: ${settings.company.phone}</div>
+                        </div>
+
+                        <div style="text-align: center; margin: 10px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0;">
+                            RECEIPT #RCP-2025-0001<br>
+                            Date: Mar 14, 2026<br>
+                            Time: 03:45 PM
+                        </div>
+
+                        <div style="margin: 10px 0;">
+                            <div>Laptop Computer.....2 x ${currencySymbol}600 = ${currencySymbol}1,200</div>
+                            <div>Software License.....1 x ${currencySymbol}300 = ${currencySymbol}300</div>
+                        </div>
+
+                        <div style="text-align: right; margin: 10px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0;">
+                            Subtotal: ${currencySymbol}1,500<br>
+                            Tax (10%): ${currencySymbol}150<br>
+                            <div style="font-weight: bold; font-size: 12px; margin-top: 5px;">
+                                TOTAL: ${currencySymbol}1,650
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 10px; font-size: 10px; border-top: 1px dashed #000; padding-top: 5px;">
+                            <div style="margin-bottom: 5px;">✓ PAID</div>
+                            <div>Thank you for your business!</div>
+                            <div style="margin-top: 5px;">Payment Method: Cash</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Default modern receipt
+                return `
+                    <div style="max-width: 400px; margin: 0 auto; border: 2px dashed ${color}; padding: 20px; border-radius: 5px;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 24px; font-weight: 700; color: ${color}; margin-bottom: 5px;">${companyName}</div>
+                            <div style="font-size: 12px; color: #666;">
+                                ${settings.company.street}<br>
+                                ${settings.company.city}, ${settings.company.country}<br>
+                                ${settings.company.phone}
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; padding: 10px 0; margin: 15px 0; text-align: center; font-size: 12px; color: #666;">
+                            Receipt #: RCP-2025-0001<br>
+                            Date: Mar 14, 2026<br>
+                            Time: 03:45 PM
+                        </div>
+
+                        <table style="width: 100%; font-size: 12px; margin: 15px 0;">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 5px 0;">Laptop Computer</td>
+                                    <td style="text-align: right;">2 x ${currencySymbol}600</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Software License</td>
+                                    <td style="text-align: right;">1 x ${currencySymbol}300</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0; text-align: right;">Subtotal</td>
+                                    <td style="text-align: right;">${currencySymbol}1,500</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0; text-align: right;">Tax (10%)</td>
+                                    <td style="text-align: right;">${currencySymbol}150</td>
+                                </tr>
+                                <tr style="border-top: 1px solid #ccc; font-weight: 700;">
+                                    <td style="padding: 10px 0; text-align: right;">Total</td>
+                                    <td style="text-align: right; color: ${color}; font-size: 14px;">${currencySymbol}1,650</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="border-top: 1px dashed #ccc; padding-top: 10px; margin-top: 15px; font-size: 11px; color: #666; text-align: center;">
+                            <div style="margin-bottom: 8px;">Payment Method: Cash</div>
+                            <div style="margin-bottom: 8px; color: #4CAF50; font-weight: 600;">✓ PAID</div>
+                            <div>Thank you for your business!</div>
+                            <div style="margin-top: 8px;">📱 ${settings.company.phone}<br>📧 ${settings.company.email}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function getCurrencySymbol(code) {
+            const symbols = {
+                'USD': '$',
+                'EUR': '€',
+                'GBP': '£',
+                'JPY': '¥',
+                'CAD': 'C$',
+                'KHR': '៛'
+            };
+            return symbols[code] || '$';
+        }
+
+        function switchTab(tabName) {
+            // Hide all
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function changeTemplateStyle() {
+            const style = document.getElementById('templateStyle').value;
+            refreshPreview();
+        }
+
+        function refreshPreview() {
+            updateSettingsDisplay();
+            const templateStyle = document.getElementById('templateStyle').value;
+
+            // Update preview based on selected template style
+            document.getElementById('invoicePreview').innerHTML = generateSampleInvoice(templateStyle);
+            document.getElementById('receiptPreview').innerHTML = generateSampleReceipt(templateStyle);
+
+            // Update Khmer previews with template style info
+            document.getElementById('invoiceKhmerPreview').innerHTML = `(Khmer invoice preview - ${templateStyle} style - in production uses INVOICE_TEMPLATE_${templateStyle.toUpperCase()}_KM.html)`;
+            document.getElementById('receiptKhmerPreview').innerHTML = `(Khmer receipt preview - ${templateStyle} style - in production uses RECEIPT_TEMPLATE_${templateStyle.toUpperCase()}_KM.html)`;
+
+            // Show success message
+            const msg = document.createElement('div');
+            msg.textContent = `✓ Preview refreshed with ${templateStyle} template style`;
+            msg.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 12px 24px; border-radius: 5px; z-index: 9999; animation: slideDown 0.3s ease;';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+        }
+
+        function openSettings() {
+            window.open('SETTINGS.html', '_blank', 'width=1200, height=800');
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            refreshPreview();
+        });
+
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ឯកសារលម្អិតបង្កើតបែបគ្រប់ចិត្ត</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Noto Sans Khmer', sans-serif; color: #333; }
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .receipt-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        .company-name {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .company-details {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.5;
+        }
+        .receipt-number {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        .items {
+            margin: 20px 0;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
+        .item-row.total {
+            border-top: 2px solid #667eea;
+            border-bottom: 2px solid #667eea;
+            padding: 12px 0;
+            font-weight: 700;
+            font-size: 13px;
+            color: #667eea;
+        }
+        .item-price { text-align: right; }
+        .subtotal { color: #999; margin-top: 10px; padding: 8px 0; font-size: 12px; }
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        @media print {
+            .receipt-container { background: white; min-height: auto; }
+            .receipt-card { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-card">
+            <div class="header">
+                <div class="company-name">{{ company_name }} 🎨</div>
+                <div class="company-details">
+                    {{ company_phone }} | {{ company_email }}
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="receipt-number">ឯកសារលម្អិត #{{ invoice_number }}</div>
+                <div style="font-size: 11px; color: #999;">{{ invoice_date }}</div>
+            </div>
+
+            <div class="items">
+                {% for item in items %}
+                <div class="item-row">
+                    <div>{{ item.description }}</div>
+                    <div class="item-price">{{ item.total | currency }}</div>
+                </div>
+                {% endfor %}
+
+                <div class="item-row total">
+                    <span>សរុប</span>
+                    <span>{{ total | currency }}</span>
+                </div>
+
+                <div class="subtotal">
+                    <strong>សរុបមូលដ្ឋាន៖</strong> {{ subtotal | currency }}<br>
+                    <strong>ពន្ធ ({{ tax_rate }}%)៖</strong> {{ tax | currency }}<br>
+                    <strong>វិធីសាស្រ្ត៖</strong> {{ payment_method }}
+                </div>
+            </div>
+
+            <div class="footer">
+                សូមស្វាគមន៍មក! 🎉<br>
+                &copy; {{ company_name }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

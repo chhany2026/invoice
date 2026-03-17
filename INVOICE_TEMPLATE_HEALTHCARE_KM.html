@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្របង្ហាញលម្អិតសេវាកម្មសុខាភិបាលលម្អិត</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Noto Sans Khmer', sans-serif; color: #2c3e50; background: #f8f9fa; }
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px;
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px 12px 0 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .company-info h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .company-info p { font-size: 13px; margin: 4px 0; opacity: 0.95; }
+        .health-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+        .invoice-title {
+            text-align: right;
+            padding-top: 20px;
+        }
+        .invoice-title h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .invoice-number { font-size: 12px; opacity: 0.9; }
+        .content {
+            background: white;
+            padding: 40px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .detail-block h3 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .detail-block p { font-size: 13px; margin: 4px 0; color: #555; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        table thead {
+            background: #f0f9f7;
+            border-top: 2px solid #10b981;
+            border-bottom: 2px solid #10b981;
+        }
+        table th {
+            padding: 14px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        table td {
+            padding: 14px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+        }
+        table tbody tr:hover { background: #f9f9f9; }
+        .amount-right { text-align: right; }
+        .totals {
+            width: 100%;
+            max-width: 380px;
+            margin-left: auto;
+            margin-bottom: 30px;
+        }
+        .totals-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .totals-row.total-final {
+            border-top: 2px solid #10b981;
+            border-bottom: 2px solid #10b981;
+            padding: 15px 0;
+            font-weight: 700;
+            font-size: 16px;
+            color: #10b981;
+        }
+        .service-notes {
+            padding: 20px;
+            background: #f0f9f7;
+            border-left: 4px solid #10b981;
+            margin: 30px 0;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .important-info {
+            padding: 15px;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 12px;
+            color: #92400e;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            border-radius: 0 0 12px 12px;
+        }
+        @media print {
+            body { background: white; }
+            .invoice-container { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <div class="company-info">
+                <h1>{{ company_name }}</h1>
+                <p>{{ company_address }}</p>
+                <p>{{ company_city }}, {{ company_state }} {{ company_postal }}</p>
+                <p style="margin-top: 8px;">📞 {{ company_phone }}</p>
+                <p>📧 {{ company_email }}</p>
+                <span class="health-badge">🏥 ក្រុមហ៊ុនប្រឹក្សាយោបល់ផ្នែកសុខាភិបាល</span>
+            </div>
+            <div class="invoice-title">
+                <h2>វិក័យប័ត្រ</h2>
+                <p class="invoice-number">លេខ៖ {{ invoice_number }}</p>
+                <p class="invoice-number">កាលបរិច្ឆេទ៖ {{ invoice_date }}</p>
+                <p class="invoice-number">លើកមក៖ {{ due_date }}</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="invoice-details">
+                <div class="detail-block">
+                    <h3>👤 ព័ត៌មានលម្អិតលម្អិតអតិថិជនឬក្រុមគ្រួសារ</h3>
+                    <p><strong>ឈ្មោះ៖</strong> {{ customer_name }}</p>
+                    <p><strong>អាសយដ្ឋាន៖</strong> {{ customer_address }}</p>
+                    <p>{{ customer_city }}, {{ customer_state }}</p>
+                    <p><strong>ទាក់ទង៖</strong> {{ customer_phone }}</p>
+                    <p><strong>អ៊ីមែល៖</strong> {{ customer_email }}</p>
+                </div>
+                <div class="detail-block">
+                    <h3>💳 លក្ខខណ្ឌផ្នែកចំណាយ</h3>
+                    <p><strong>វិធីសាស្រ្ត៖</strong><br>{{ payment_method }}</p>
+                    <p style="margin-top: 10px;"><strong>លក្ខខណ្ឌ៖</strong><br>{{ payment_terms }}</p>
+                    <p style="margin-top: 10px;"><strong>លេខលេខកូដផ្នែកសុខាភិបាល៖</strong><br>{{ company_tax_id }}</p>
+                </div>
+            </div>
+
+            {% if notes %}
+            <div class="important-info">
+                <strong>⚠️ ព័ត៌មានលម្អិតលម្អិតសំខាន់៖</strong><br>
+                {{ notes }}
+            </div>
+            {% endif %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ការពិពណ៌នាសេវាកម្ម</th>
+                        <th class="amount-right">បរិមាណ</th>
+                        <th class="amount-right">តម្លៃឯកតា</th>
+                        <th class="amount-right">ចំនួន</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td class="amount-right">{{ item.quantity }}</td>
+                        <td class="amount-right">{{ item.price | currency }}</td>
+                        <td class="amount-right">{{ item.total | currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <div class="totals-row">
+                    <span>សរុបមូលដ្ឋាន៖</span>
+                    <span>{{ subtotal | currency }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>ពន្ធ ({{ tax_rate }}%)៖</span>
+                    <span>{{ tax | currency }}</span>
+                </div>
+                <div class="totals-row total-final">
+                    <span>ចំនួនលើកមក៖</span>
+                    <span>{{ total | currency }}</span>
+                </div>
+            </div>
+
+            <div class="service-notes">
+                <strong>📋 ចំណាំលម្អិត៖</strong><br>
+                សេវាកម្មលម្អិតទាំងអស់ដែលបានផ្តល់ជូនគឺសម្រាប់គោលបំណងផ្នែកសុខាភិបាល។ សូមរក្សាវិក័យប័ត្រលម្អិតនេះដើម្បីប្រើប្រាស់ក្នុងគោលបំណងពន្ធលម្អិត។
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>សូមស្វាគមន៍មកលម្អិត {{ company_name }} សម្រាប់ក្រុមហ៊ុនប្រឹក្សាយោបល់ផ្នែកសុខាភិបាលលម្អិត។</p>
+            <p>&copy; {{ company_name }}. រក្សាសិទ្ធិគ្រប់យ៉ាង។ វិក័យប័ត្របង្ហាញលម្អិតលម្អិតនេះគឺសម្ងាត់។</p>
+        </div>
+    </div>
+</body>
+</html>

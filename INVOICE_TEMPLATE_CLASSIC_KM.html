@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្រប្រតិបត្តិការ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Khmer OS', 'Khmer OS Siemreap', 'Khmer OS Muol', 'Khmer OS Battambang', 'Khmer OS Content', 'Times New Roman', serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-button {
+                display: none !important;
+            }
+        }
+
+        .print-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header-section {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .company-logo {
+            width: 120px;
+            height: 80px;
+            margin: 0 auto 15px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .company-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .company-details {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .invoice-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .invoice-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .invoice-details {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .invoice-details div {
+            margin-bottom: 5px;
+        }
+
+        .invoice-details strong {
+            display: inline-block;
+            width: 80px;
+        }
+
+        .bill-to-section {
+            margin-bottom: 30px;
+        }
+
+        .bill-to-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .bill-to-details {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 12px;
+        }
+
+        .items-table th {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .items-table td {
+            border: 1px solid #ddd;
+            padding: 12px 8px;
+            vertical-align: top;
+        }
+
+        .items-table .description {
+            width: 40%;
+        }
+
+        .items-table .quantity {
+            width: 15%;
+            text-align: center;
+        }
+
+        .items-table .unit-price {
+            width: 20%;
+            text-align: right;
+        }
+
+        .items-table .total {
+            width: 25%;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .item-description {
+            font-weight: 500;
+        }
+
+        .item-meta {
+            font-size: 11px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .totals-table {
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 8px 15px;
+            border: none;
+        }
+
+        .totals-table .total-label {
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .totals-table .total-amount {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .totals-table .grand-total {
+            border-top: 2px solid #333;
+            font-size: 16px;
+            padding-top: 15px;
+        }
+
+        .totals-table .grand-total .total-label,
+        .totals-table .grand-total .total-amount {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .payment-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+        }
+
+        .payment-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .payment-details {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .footer-section {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .terms-section {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .print-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .print-button:hover {
+            background: #555;
+        }
+
+        @media (max-width: 768px) {
+            .print-container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .invoice-title-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .invoice-title {
+                font-size: 28px;
+            }
+
+            .invoice-details {
+                text-align: left;
+            }
+
+            .items-table {
+                font-size: 11px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="company-info">
+                <div class="company-logo">
+                    <img src="{{ company_logo or '' }}" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <span style="display: none;">🏢</span>
+                </div>
+                <div class="company-name">{{ company_name or 'ឈ្មោះក្រុមហ៊ុន' }}</div>
+                <div class="company-details">
+                    {{ company_address or 'អាសយដ្ឋានក្រុមហ៊ុន' }}<br>
+                    ទូរស័ព្ទ: {{ company_phone or '+855-23-456-789' }} | អ៉ីមែល: {{ company_email or 'info@company.com' }}
+                </div>
+            </div>
+
+            <div class="invoice-title-section">
+                <div class="invoice-title">វិក័យប័ត្រ</div>
+                <div class="invoice-details">
+                    <div><strong>លេខវិក័យប័ត្រ:</strong> {{ invoice_number or 'វិក័យប័ត្រ-២០២៤-០០០១' }}</div>
+                    <div><strong>កាលបរិច្ឆេទ:</strong> {{ invoice_date or '០១ មករា ២០២៤' }}</div>
+                    <div><strong>កាលបរិច្ឆេទបង់:</strong> {{ due_date or '៣១ មករា ២០២៤' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bill To Section -->
+        <div class="bill-to-section">
+            <div class="bill-to-title">វិក័យប័ត្រសម្រាប់:</div>
+            <div class="bill-to-details">
+                <strong>{{ customer_name or 'ឈ្មោះអតិថិជន' }}</strong><br>
+                {{ customer_address or 'អាសយដ្ឋានអតិថិជន' }}<br>
+                {{ customer_city or 'ក្រុង' }}, {{ customer_country or 'ប្រទេស' }}<br>
+                ទូរស័ព្ទ: {{ customer_phone or '+855-12-345-678' }}<br>
+                អ៉ីមែល: {{ customer_email or 'customer@example.com' }}
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th class="description">ពិពណ៌នា</th>
+                    <th class="quantity">បរិមាណ</th>
+                    <th class="unit-price">តម្លៃឯកតា</th>
+                    <th class="total">សរុប</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in line_items %}
+                <tr>
+                    <td class="description">
+                        <div class="item-description">{{ item.description or 'ពិពណ៌នាផលិតផល' }}</div>
+                        {% if item.serial_number %}
+                        <div class="item-meta">លេខស៉ែរៀល: {{ item.serial_number }}</div>
+                        {% endif %}
+                        {% if item.warranty_duration_months %}
+                        <div class="item-meta">ការធានា: {{ item.warranty_duration_months }} ខែ</div>
+                        {% endif %}
+                    </td>
+                    <td class="quantity">{{ item.quantity or 1 }}</td>
+                    <td class="unit-price">{{ currency or '៛' }}{{ "%.0f"|format(item.unit_price or 0) }}</td>
+                    <td class="total">{{ currency or '៛' }}{{ "%.0f"|format(item.line_total or 0) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Totals Section -->
+        <div class="totals-section">
+            <table class="totals-table">
+                <tr>
+                    <td class="total-label">សរុបរង:</td>
+                    <td class="total-amount">{{ currency or '៛' }}{{ "%.0f"|format(subtotal or 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="total-label">ពន្ធ ({{ tax_rate or 0 }}%):</td>
+                    <td class="total-amount">{{ currency or '៛' }}{{ "%.0f"|format(tax_amount or 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="total-label">បញ្ចុះតម្លៃ:</td>
+                    <td class="total-amount">{{ currency or '៛' }}{{ "%.0f"|format(discount_amount or 0) }}</td>
+                </tr>
+                <tr>
+                    <td class="total-label">ដឹកជញ្ជូន:</td>
+                    <td class="total-amount">{{ currency or '៛' }}{{ "%.0f"|format(shipping_cost or 0) }}</td>
+                </tr>
+                <tr class="grand-total">
+                    <td class="total-label">សរុប:</td>
+                    <td class="total-amount">{{ currency or '៛' }}{{ "%.0f"|format(grand_total or 0) }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Payment Information -->
+        {% if payment_status %}
+        <div class="payment-section">
+            <div class="payment-title">ព័ត៌មានការបង់ប្រាក់</div>
+            <div class="payment-details">
+                <strong>ស្ថានភាព:</strong> {{ payment_status }}<br>
+                {% if payment_method %}<strong>វិធីសាស្ត្រ:</strong> {{ payment_method }}<br>{% endif %}
+                {% if amount_paid %}<strong>ចំនួនបង់:</strong> {{ currency or '៛' }}{{ "%.0f"|format(amount_paid) }}<br>{% endif %}
+                {% if payment_date %}<strong>កាលបរិច្ឆេទបង់:</strong> {{ payment_date }}{% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Terms and Footer -->
+        <div class="terms-section">
+            {% if terms_and_conditions %}
+            <strong>ល័ក្ខខ័ណ្ឌ និងការបង់ប្រាក់:</strong><br>
+            {{ terms_and_conditions }}
+            {% else %}
+            <strong>ល័ក្ខខ័ណ្ឌ និងការបង់ប្រាក់:</strong><br>
+            ការបង់ប្រាក់ត្រូវបានបង់ក្នុងរយៈពេល ៣០ ថ្ងៃចាប់ពីកាលបរិច្ឆេទវិក័យប័ត្រ។ ការបង់ប្រាក់យឺតអាចអនុវត្តការគិតប្រាក់បន្ថែម។
+            {% endif %}
+        </div>
+
+        <div class="footer-section">
+            <p>សូមអរគុណចំពោះការប្រើប្រាស់សេវាកម្មរបស់យើង!</p>
+            {% if company_website %}
+            <p>ចូលមើលគេហទំព័ររបស់យើងនៅ {{ company_website }}</p>
+            {% endif %}
+            <button class="print-button no-print" onclick="window.print()">បោះពុម្ពវិក័យប័ត្រ</button>
+        </div>
+    </div>
+</body>
+</html></content>
+<parameter name="filePath">d:\Coding Folder\sola project\Warranty Product\INVOICE_TEMPLATE_CLASSIC_KM.html

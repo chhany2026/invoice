@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Elegant Style</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Proxima Nova', 'Segoe UI', sans-serif; background: #f8f9fa; padding: 20px; color: #2c3e50; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 50px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); border-top: 5px solid #d4af37; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e8e8e8; }
+        .header h1 { font-size: 28px; font-weight: 700; color: #d4af37; margin-bottom: 5px; letter-spacing: 2px; }
+        .header p { font-size: 12px; color: #666; margin: 3px 0; }
+        .receipt-meta { text-align: center; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #d4af37; }
+        .meta-row { font-size: 12px; margin: 5px 0; color: #333; }
+        .meta-label { color: #999; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+        .customer-info { margin-bottom: 30px; padding: 20px; background: #f8f9fa; }
+        .customer-info h3 { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
+        .customer-info p { font-size: 13px; margin: 3px 0; color: #333; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+        .items-table thead { border-bottom: 3px solid #d4af37; }
+        .items-table th { padding: 10px; text-align: left; font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .items-table td { padding: 10px; border-bottom: 1px solid #e8e8e8; font-size: 12px; }
+        .items-table tbody tr:hover { background: #f8f9fa; }
+        .text-right { text-align: right; }
+        .total-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid #e8e8e8; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .total-row.total { font-size: 16px; font-weight: 700; color: #d4af37; padding-top: 10px; }
+        .payment-method { margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #d4af37; }
+        .payment-method h3 { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+        .payment-method p { font-size: 12px; color: #333; }
+        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e8e8e8; font-size: 11px; color: #999; }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RECEIPT</h1>
+            <p>{{ company_name }}</p>
+            <p>{{ company_email }} | {{ company_phone }}</p>
+        </div>
+        
+        <div class="receipt-meta">
+            <div class="meta-row"><span class="meta-label">Receipt #</span> {{ receipt_number }}</div>
+            <div class="meta-row"><span class="meta-label">Date</span> {{ receipt_date }}</div>
+            <div class="meta-row"><span class="meta-label">Time</span> {{ receipt_time }}</div>
+        </div>
+        
+        <div class="customer-info">
+            <h3>Customer</h3>
+            <p><strong>{{ customer_name }}</strong></p>
+            <p>{{ customer_email }}</p>
+            <p>{{ customer_phone }}</p>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-right" style="width: 60px;">Qty</th>
+                    <th class="text-right" style="width: 80px;">Price</th>
+                    <th class="text-right" style="width: 80px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.price | currency }}</td>
+                    <td class="text-right">{{ item.amount | currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="total-section">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>{{ subtotal | currency }}</span>
+            </div>
+            <div class="total-row">
+                <span>Tax</span>
+                <span>{{ tax | currency }}</span>
+            </div>
+            <div class="total-row total">
+                <span>TOTAL PAID</span>
+                <span>{{ total | currency }}</span>
+            </div>
+        </div>
+        
+        <div class="payment-method">
+            <h3>Payment Method</h3>
+            <p>{{ payment_method }}</p>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for your purchase! Please keep this receipt for your records.</p>
+        </div>
+    </div>
+</body>
+</html>

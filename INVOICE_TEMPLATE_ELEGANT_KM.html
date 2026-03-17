@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្រ - រចនាបង្ហាញមានលក្ខណៈខ្ពស់</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Segoe UI', sans-serif; background: #f8f9fa; padding: 20px; line-height: 1.6; color: #2c3e50; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 60px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); border-top: 5px solid #d4af37; }
+        .header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px; border-bottom: 2px solid #e8e8e8; padding-bottom: 40px; }
+        .company-info h1 { font-size: 32px; font-weight: 700; color: #d4af37; margin-bottom: 20px; letter-spacing: 2px; }
+        .company-info p { font-size: 13px; margin: 8px 0; color: #666; }
+        .invoice-header { text-align: right; }
+        .invoice-header .label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .invoice-header .value { font-size: 20px; font-weight: 700; color: #2c3e50; margin-bottom: 15px; }
+        .customer-details { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; padding: 30px; background: #f8f9fa; border-left: 4px solid #d4af37; }
+        .customer-details h3 { font-size: 11px; color: #999; margin-bottom: 10px; font-weight: 600; }
+        .customer-details p { font-size: 13px; margin: 5px 0; color: #333; }
+        .items-table { width: 100%; margin: 40px 0; border-collapse: collapse; }
+        .items-table thead { background: #f8f9fa; border-bottom: 3px solid #d4af37; }
+        .items-table th { padding: 15px; text-align: left; font-size: 11px; color: #666; font-weight: 700; }
+        .items-table td { padding: 15px; border-bottom: 1px solid #e8e8e8; font-size: 13px; }
+        .items-table tbody tr:hover { background: #f8f9fa; }
+        .amount-right { text-align: right; }
+        .totals { display: flex; justify-content: flex-end; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px solid #e8e8e8; }
+        .total-row { min-width: 250px; }
+        .total-label { font-size: 12px; color: #999; margin-bottom: 5px; }
+        .total-amount { font-size: 24px; font-weight: 700; color: #d4af37; }
+        .total-amount.grand { color: #2c3e50; font-size: 28px; border-bottom: 3px solid #d4af37; padding-bottom: 10px; }
+        .notes { margin-top: 40px; padding: 30px; background: #f8f9fa; border-left: 4px solid #d4af37; }
+        .notes h3 { font-size: 11px; color: #999; margin-bottom: 10px; font-weight: 600; }
+        .notes p { font-size: 13px; color: #666; line-height: 1.8; }
+        .footer { margin-top: 40px; padding-top: 40px; border-top: 2px solid #e8e8e8; text-align: center; font-size: 11px; color: #999; }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-info">
+                <h1>វិក័យប័ត្រ</h1>
+                <p><strong>{{ company_name }}</strong></p>
+                <p>{{ company_street }}</p>
+                <p>{{ company_city }}, {{ company_state }}</p>
+                <p>{{ company_email }}</p>
+                <p>{{ company_phone }}</p>
+            </div>
+            <div class="invoice-header">
+                <div class="label">លេខវិក័យប័ត្រ</div>
+                <div class="value">{{ invoice_number }}</div>
+                <div class="label">ថ្ងៃដែលចេញ</div>
+                <div class="value">{{ invoice_date }}</div>
+            </div>
+        </div>
+        
+        <div class="customer-details">
+            <div>
+                <h3>ថ្លែងលក្ខណៈលម្អិត</h3>
+                <p><strong>{{ customer_name }}</strong></p>
+                <p>{{ customer_email }}</p>
+                <p>{{ customer_phone }}</p>
+                <p>{{ customer_city }}, {{ customer_country }}</p>
+            </div>
+            <div>
+                <h3>លក្ខខណ្ឌលក់</h3>
+                <p>{{ payment_terms }}</p>
+                <p style="margin-top: 15px;"><strong>រូបិយប័ណ្ណ: {{ currency }}</strong></p>
+            </div>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>ការពិពណ៌នា</th>
+                    <th class="amount-right">បរិមាណ</th>
+                    <th class="amount-right">តម្លៃឯកតា</th>
+                    <th class="amount-right">ចំនួនប្រាក់</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="amount-right">{{ item.quantity }}</td>
+                    <td class="amount-right">{{ item.price | currency }}</td>
+                    <td class="amount-right">{{ item.amount | currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="totals">
+            <div class="total-row">
+                <div class="total-label">ចំនួនរងយក្ស</div>
+                <div class="total-amount">{{ subtotal | currency }}</div>
+            </div>
+            <div class="total-row">
+                <div class="total-label">ពន្ធ ({{ tax_rate }}%)</div>
+                <div class="total-amount">{{ tax | currency }}</div>
+            </div>
+            <div class="total-row">
+                <div class="total-label">ចំនួនសរុប</div>
+                <div class="total-amount grand">{{ total | currency }}</div>
+            </div>
+        </div>
+        
+        <div class="notes">
+            <h3>លក្ខខណ្ឌ និងការផ្សារភាគ</h3>
+            <p>{{ invoice_terms }}</p>
+        </div>
+        
+        <div class="footer">
+            <p>សូមស្វាគមន៍ក្នុងការ​ប្រើប្រាស់សេវាកម្ម! វិក័យប័ត្រនេះមានសុពលភាពលុះត្រាតែបានព័ត៌មាននៃシール/ហត្ថលេខា។</p>
+        </div>
+    </div>
+</body>
+</html>

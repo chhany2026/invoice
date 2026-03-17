@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Settings - Warranty Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid white;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 15px 25px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tabs-content {
+            background: white;
+            border-radius: 0 10px 10px 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input-group input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .color-input-group input[type="text"] {
+            flex: 1;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .preview-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #eee;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .currency-symbols {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .currency-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .currency-item:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .currency-item.selected {
+            border-color: #667eea;
+            background: #e8eaf6;
+        }
+
+        .currency-code {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .currency-symbol {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .payment-method-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .payment-method-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 24px;
+            background: #ddd;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 28px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-container {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        .success-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1>⚙️ Invoice Settings</h1>
+                    <p>Customize your invoice templates, company information, and business settings</p>
+                </div>
+                <button class="btn-primary" onclick="openTemplatePreview()" style="margin-top: 5px; height: fit-content;">👁️ View Template Preview</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="switchTab('company')">🏢 Company Info</button>
+            <button class="tab-button" onclick="switchTab('branding')">🎨 Branding</button>
+            <button class="tab-button" onclick="switchTab('invoice')">📋 Invoice Settings</button>
+            <button class="tab-button" onclick="switchTab('payments')">💳 Payment Methods</button>
+            <button class="tab-button" onclick="switchTab('currencies')">💰 Currencies</button>
+            <button class="tab-button" onclick="switchTab('advanced')">⚡ Advanced</button>
+        </div>
+
+        <!-- Content -->
+        <div class="tabs-content">
+            <div id="alerts"></div>
+
+            <!-- Company Information Tab -->
+            <div id="company" class="tab-content active">
+                <div class="form-section">
+                    <h2 class="section-title">🏢 Company Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input type="text" id="companyName" placeholder="Your Company Name">
+                            <span class="help-text">Displayed on all invoices</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Company Email</label>
+                            <input type="email" id="companyEmail" placeholder="info@company.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="companyPhone" placeholder="+1-555-0100">
+                        </div>
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="companyWebsite" placeholder="https://www.company.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Street Address</label>
+                            <input type="text" id="companyStreet" placeholder="123 Business St">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="companyCity" placeholder="San Francisco">
+                        </div>
+                        <div class="form-group">
+                            <label>State/Province</label>
+                            <input type="text" id="companyState" placeholder="California">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" id="companyPostal" placeholder="94105">
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" id="companyCountry" placeholder="United States">
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Tax ID / Registration Number</label>
+                            <input type="text" id="companyTaxId" placeholder="Tax ID">
+                            <span class="help-text">Will appear on invoices if provided</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('company')">✓ Save Company Info</button>
+                    <button class="btn-secondary" onclick="resetSettings('company')">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Branding Tab -->
+            <div id="branding" class="tab-content">
+                <div class="form-section">
+                    <h2 class="section-title">🎨 Branding & Colors</h2>
+                    
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Company Logo</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <div style="flex: 1;">
+                                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">📎 Upload Logo File</label>
+                                    <input type="file" id="logoFile" accept="image/*" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;">
+                                    <button type="button" onclick="uploadLogo()" style="margin-top: 8px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">↑ Upload Logo</button>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">🔗 Or Use Web Link</label>
+                                    <input type="url" id="logoUrl" placeholder="https://example.com/logo.png" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                                </div>
+                            </div>
+                            <div id="logoPreview" style="text-align: center; margin: 15px 0; min-height: 60px;">
+                                <img id="logoImg" style="max-height: 80px; max-width: 100%; display: none; border-radius: 4px;" />
+                                <span id="noLogoMsg" style="color: #999;">No logo uploaded</span>
+                            </div>
+                            <span class="help-text">Upload PNG, JPG, GIF, SVG, or use a web link. Max recommended size: 200x100px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Primary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="primaryColor" value="#667eea">
+                                <input type="text" id="primaryColorText" placeholder="#667eea">
+                            </div>
+                            <span class="help-text">Used for headers and highlights</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="secondaryColor" value="#764ba2">
+                                <input type="text" id="secondaryColorText" placeholder="#764ba2">
+                            </div>
+                            <span class="help-text">Used for accents</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Accent Color (Success)</label>
+                            <div class="color-input-group">
+                                <input type="color" id="accentColor" value="#4CAF50">
+                                <input type="text" id="accentColorText" placeholder="#4CAF50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Font Family</label>
+                            <select id="fontFamily">
+                                <option value="Arial, sans-serif">Arial (Clean & Modern)</option>
+                                <option value="'Segoe UI', Tahoma, sans-serif">Segoe UI (Professional)</option>
+                                <option value="Georgia, serif">Georgia (Elegant)</option>
+                                <option value="'Times New Roman', serif">Times New Roman (Classic)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="preview-box">
+                        <div class="preview-title">Preview</div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px; text-align: center;">
+                            <h3>Your Invoice Header</h3>
+                            <p style="margin-top: 10px; opacity: 0.9;">This is how your invoices will look</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('branding')">✓ Save Branding</button>
+                    <button class="btn-secondary" onclick="resetSettings('branding')">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Invoice Settings Tab -->
+            <div id="invoice" class="tab-content">
+                <div class="form-section">
+                    <h2 class="section-title">📋 Invoice Settings</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Invoice Prefix</label>
+                            <input type="text" id="invoicePrefix" placeholder="INV" value="INV">
+                            <span class="help-text">Example: INV-2025-000001</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Invoice Start Number</label>
+                            <input type="number" id="invoiceStartNum" placeholder="1000" value="1000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Default Tax Rate (%)</label>
+                            <input type="number" id="defaultTaxRate" placeholder="10" value="10" step="0.1" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Terms (Days)</label>
+                            <input type="number" id="paymentTerms" placeholder="30" value="30" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Invoice Terms & Conditions</label>
+                            <textarea id="invoiceTerms" placeholder="Enter your standard terms and conditions...">Thank you for your business! Payment is due within the specified terms. Please make checks payable to the company name above.</textarea>
+                            <span class="help-text">Displayed at the bottom of invoices</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Invoice Notes (Optional)</label>
+                            <textarea id="invoiceNotes" placeholder="Add any additional notes or messages..."></textarea>
+                            <span class="help-text">Will appear above the terms</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Default Currency</label>
+                            <select id="defaultCurrency">
+                                <option value="USD">USD (US Dollar)</option>
+                                <option value="EUR">EUR (Euro)</option>
+                                <option value="GBP">GBP (British Pound)</option>
+                                <option value="JPY">JPY (Japanese Yen)</option>
+                                <option value="CAD">CAD (Canadian Dollar)</option>
+                                <option value="KHR">KHR (Cambodian Riel)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Default Language</label>
+                            <select id="defaultLanguage">
+                                <option value="en">English</option>
+                                <option value="km">ខ្មែរ (Khmer)</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="pt">Portuguese</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('invoice')">✓ Save Invoice Settings</button>
+                    <button class="btn-secondary" onclick="resetSettings('invoice')">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Payment Methods Tab -->
+            <div id="payments" class="tab-content">
+                <div class="form-section">
+                    <h2 class="section-title">💳 Payment Methods</h2>
+                    
+                    <div class="payment-method-item">
+                        <div class="payment-method-title">
+                            <span>💵 Cash (KHR & USD)</span>
+                            <div class="toggle-switch active" onclick="togglePaymentMethod(this, 'cash')"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>KHR Account Details</label>
+                                <input type="text" id="cashKHRDetails" placeholder="e.g., Account holder name">
+                            </div>
+                            <div class="form-group">
+                                <label>USD Account Details</label>
+                                <input type="text" id="cashUSDDetails" placeholder="e.g., Account holder name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method-item">
+                        <div class="payment-method-title">
+                            <span>🇰🇭 KHQR (Bakong)</span>
+                            <div class="toggle-switch active" onclick="togglePaymentMethod(this, 'khqr')"></div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-group">
+                                <label>Merchant ID / Account</label>
+                                <input type="text" id="khqrId" placeholder="Your KHQR Merchant ID">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method-item">
+                        <div class="payment-method-title">
+                            <span>🏛️ ABA Bank</span>
+                            <div class="toggle-switch active" onclick="togglePaymentMethod(this, 'aba')"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Account Holder Name</label>
+                                <input type="text" id="abaName" placeholder="Account holder name">
+                            </div>
+                            <div class="form-group">
+                                <label>Account Number</label>
+                                <input type="text" id="abaAccount" placeholder="Account number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-method-item">
+                        <div class="payment-method-title">
+                            <span>🏛️ ACLEDA Bank</span>
+                            <div class="toggle-switch active" onclick="togglePaymentMethod(this, 'acleda')"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Account Holder Name</label>
+                                <input type="text" id="acledaName" placeholder="Account holder name">
+                            </div>
+                            <div class="form-group">
+                                <label>Account Number</label>
+                                <input type="text" id="acledaAccount" placeholder="Account number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('payments')">✓ Save Payment Methods</button>
+                    <button class="btn-secondary" onclick="resetSettings('payments')">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Currencies Tab -->
+            <div id="currencies" class="tab-content">
+                <div class="form-section">
+                    <h2 class="section-title">💰 Currency Settings</h2>
+                    
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Select Currencies to Use</label>
+                            <div class="currency-symbols">
+                                <div class="currency-item" onclick="toggleCurrency(this, 'USD')">
+                                    <div class="currency-code">USD</div>
+                                    <div class="currency-symbol">$</div>
+                                </div>
+                                <div class="currency-item" onclick="toggleCurrency(this, 'EUR')">
+                                    <div class="currency-code">EUR</div>
+                                    <div class="currency-symbol">€</div>
+                                </div>
+                                <div class="currency-item" onclick="toggleCurrency(this, 'GBP')">
+                                    <div class="currency-code">GBP</div>
+                                    <div class="currency-symbol">£</div>
+                                </div>
+                                <div class="currency-item" onclick="toggleCurrency(this, 'JPY')">
+                                    <div class="currency-code">JPY</div>
+                                    <div class="currency-symbol">¥</div>
+                                </div>
+                                <div class="currency-item" onclick="toggleCurrency(this, 'CAD')">
+                                    <div class="currency-code">CAD</div>
+                                    <div class="currency-symbol">C$</div>
+                                </div>
+                                <div class="currency-item selected" onclick="toggleCurrency(this, 'KHR')">
+                                    <div class="currency-code">KHR</div>
+                                    <div class="currency-symbol">៛</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('currencies')">✓ Save Currencies</button>
+                    <button class="btn-secondary" onclick="resetSettings('currencies')">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div id="advanced" class="tab-content">
+                <div class="form-section">
+                    <h2 class="section-title">⚡ Advanced Settings</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Invoice Numbering Style</label>
+                            <select id="numberingStyle">
+                                <option value="simple">Simple (1, 2, 3)</option>
+                                <option value="yearly">Yearly (2026-0001)</option>
+                                <option value="monthly">Monthly (202603-001)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Timezone</label>
+                            <select id="timezone">
+                                <option value="UTC">UTC</option>
+                                <option value="Asia/Bangkok">Asia/Bangkok (Cambodia)</option>
+                                <option value="America/New_York">America/New_York</option>
+                                <option value="Europe/London">Europe/London</option>
+                                <option value="Asia/Tokyo">Asia/Tokyo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Decimal Places</label>
+                            <select id="decimalPlaces">
+                                <option value="2">2 (Default)</option>
+                                <option value="0">0 (Whole numbers)</option>
+                                <option value="3">3 (High precision)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date Format</label>
+                            <select id="dateFormat">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY (US)</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY (Europe)</option>
+                                <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Enable Invoice Reminders</label>
+                            <select id="enableReminders">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label>Warranty Duration (Default - Months)</label>
+                            <input type="number" id="defaultWarranty" placeholder="24" value="24" min="1">
+                            <span class="help-text">Default warranty duration for products</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="saveSettings('advanced')">✓ Save Advanced Settings</button>
+                    <button class="btn-secondary" onclick="resetSettings('advanced')">↻ Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        const STORAGE_KEY = 'invoiceSettings';
+
+        // Load settings on page load
+        window.addEventListener('load', function() {
+            loadSettingsFromAPI();
+        });
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function togglePaymentMethod(element, method) {
+            element.classList.toggle('active');
+        }
+
+        function toggleCurrency(element, currency) {
+            element.classList.toggle('selected');
+        }
+
+        function saveSettings(tabName) {
+            const settings = {};
+
+            if (tabName === 'company') {
+                settings.company = {
+                    name: document.getElementById('companyName').value,
+                    email: document.getElementById('companyEmail').value,
+                    phone: document.getElementById('companyPhone').value,
+                    website: document.getElementById('companyWebsite').value,
+                    street: document.getElementById('companyStreet').value,
+                    city: document.getElementById('companyCity').value,
+                    state: document.getElementById('companyState').value,
+                    postal: document.getElementById('companyPostal').value,
+                    country: document.getElementById('companyCountry').value,
+                    taxId: document.getElementById('companyTaxId').value
+                };
+            } else if (tabName === 'branding') {
+                settings.branding = {
+                    logo: document.getElementById('logoUrl').value,
+                    primaryColor: document.getElementById('primaryColor').value,
+                    secondaryColor: document.getElementById('secondaryColor').value,
+                    accentColor: document.getElementById('accentColor').value,
+                    fontFamily: document.getElementById('fontFamily').value
+                };
+            } else if (tabName === 'invoice') {
+                settings.invoice = {
+                    prefix: document.getElementById('invoicePrefix').value,
+                    startNum: document.getElementById('invoiceStartNum').value,
+                    taxRate: document.getElementById('defaultTaxRate').value,
+                    paymentTerms: document.getElementById('paymentTerms').value,
+                    terms: document.getElementById('invoiceTerms').value,
+                    notes: document.getElementById('invoiceNotes').value,
+                    defaultCurrency: document.getElementById('defaultCurrency').value,
+                    defaultLanguage: document.getElementById('defaultLanguage').value
+                };
+            } else if (tabName === 'payments') {
+                settings.payments = {
+                    cashKHRDetails: document.getElementById('cashKHRDetails').value,
+                    cashUSDDetails: document.getElementById('cashUSDDetails').value,
+                    khqrId: document.getElementById('khqrId').value,
+                    abaName: document.getElementById('abaName').value,
+                    abaAccount: document.getElementById('abaAccount').value,
+                    acledaName: document.getElementById('acledaName').value,
+                    acledaAccount: document.getElementById('acledaAccount').value
+                };
+            } else if (tabName === 'currencies') {
+                const selectedCurrencies = Array.from(document.querySelectorAll('.currency-item.selected')).map(el => el.querySelector('.currency-code').textContent);
+                settings.currencies = {
+                    enabled: selectedCurrencies.length > 0 ? selectedCurrencies : ['USD', 'KHR'],
+                    symbols: {
+                        USD: "$",
+                        EUR: "€",
+                        GBP: "£",
+                        JPY: "¥",
+                        CAD: "C$",
+                        KHR: "៛"
+                    }
+                };
+            } else if (tabName === 'advanced') {
+                settings.advanced = {
+                    numberingStyle: document.getElementById('numberingStyle').value,
+                    timezone: document.getElementById('timezone').value,
+                    decimalPlaces: document.getElementById('decimalPlaces').value,
+                    dateFormat: document.getElementById('dateFormat').value,
+                    enableReminders: document.getElementById('enableReminders').value,
+                    defaultWarranty: document.getElementById('defaultWarranty').value
+                };
+            }
+
+            // Save to backend API
+            saveToAPI(tabName, settings[tabName]);
+        }
+
+        function saveToAPI(section, data) {
+            fetch(`${API_BASE}/settings/${section}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(`✓ ${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`, 'success');
+                } else {
+                    showAlert(`✗ Error: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert(`✗ Error saving settings: ${error.message}`, 'error');
+            });
+        }
+
+        function uploadLogo() {
+            const fileInput = document.getElementById('logoFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('✗ Please select a file to upload', 'error');
+                return;
+            }
+            
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('✗ File size must be less than 5MB', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Show uploading status
+            showAlert('⏳ Uploading logo...', 'info');
+            
+            fetch(`${API_BASE}/upload/logo`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the logo input field
+                    document.getElementById('logoUrl').value = data.logo_url;
+                    
+                    // Display preview
+                    displayLogoPreview(data.logo_url);
+                    
+                    // Clear file input
+                    fileInput.value = '';
+                    
+                    // Save to settings
+                    const branding = {
+                        logo: data.logo_url,
+                        primaryColor: document.getElementById('primaryColor').value,
+                        secondaryColor: document.getElementById('secondaryColor').value,
+                        accentColor: document.getElementById('accentColor').value,
+                        fontFamily: document.getElementById('fontFamily').value
+                    };
+                    saveToAPI('branding', branding);
+                    
+                    showAlert('✓ Logo uploaded successfully!', 'success');
+                } else {
+                    showAlert(`✗ Error: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert(`✗ Upload error: ${error.message}`, 'error');
+            });
+        }
+
+        function displayLogoPreview(logoUrl) {
+            const logoImg = document.getElementById('logoImg');
+            const noLogoMsg = document.getElementById('noLogoMsg');
+            
+            if (logoUrl && logoUrl !== '') {
+                logoImg.src = logoUrl;
+                logoImg.style.display = 'block';
+                noLogoMsg.style.display = 'none';
+            } else {
+                logoImg.style.display = 'none';
+                noLogoMsg.style.display = 'block';
+            }
+        }
+
+        function resetSettings(tabName) {
+            if (confirm('Are you sure you want to reset these settings to defaults?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        function loadSettingsFromAPI() {
+            // Try to load from backend API first
+            fetch(`${API_BASE}/settings`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && typeof data === 'object') {
+                        loadSettingsToForm(data);
+                        // Also save to localStorage as backup
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    } else {
+                        loadSettingsFromStorage();
+                    }
+                })
+                .catch(error => {
+                    console.log('API load failed, using localStorage:', error);
+                    loadSettingsFromStorage();
+                });
+        }
+
+        function loadSettingsFromStorage() {
+            const settings = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            loadSettingsToForm(settings);
+        }
+
+        function loadSettingsToForm(settings) {
+            if (settings.company) {
+                document.getElementById('companyName').value = settings.company.name || '';
+                document.getElementById('companyEmail').value = settings.company.email || '';
+                document.getElementById('companyPhone').value = settings.company.phone || '';
+                document.getElementById('companyWebsite').value = settings.company.website || '';
+                document.getElementById('companyStreet').value = settings.company.street || '';
+                document.getElementById('companyCity').value = settings.company.city || '';
+                document.getElementById('companyState').value = settings.company.state || '';
+                document.getElementById('companyPostal').value = settings.company.postal || '';
+                document.getElementById('companyCountry').value = settings.company.country || '';
+                document.getElementById('companyTaxId').value = settings.company.taxId || '';
+            }
+
+            if (settings.branding) {
+                document.getElementById('logoUrl').value = settings.branding.logo || '';
+                document.getElementById('primaryColor').value = settings.branding.primaryColor || '#667eea';
+                document.getElementById('secondaryColor').value = settings.branding.secondaryColor || '#764ba2';
+                document.getElementById('accentColor').value = settings.branding.accentColor || '#4CAF50';
+                document.getElementById('fontFamily').value = settings.branding.fontFamily || 'Arial, sans-serif';
+            }
+
+            if (settings.invoice) {
+                document.getElementById('invoicePrefix').value = settings.invoice.prefix || 'INV';
+                document.getElementById('invoiceStartNum').value = settings.invoice.startNum || '1000';
+                document.getElementById('defaultTaxRate').value = settings.invoice.taxRate || '10';
+                document.getElementById('paymentTerms').value = settings.invoice.paymentTerms || '30';
+                document.getElementById('invoiceTerms').value = settings.invoice.terms || 'Thank you for your business!';
+                document.getElementById('invoiceNotes').value = settings.invoice.notes || '';
+                document.getElementById('defaultCurrency').value = settings.invoice.defaultCurrency || 'USD';
+                document.getElementById('defaultLanguage').value = settings.invoice.defaultLanguage || 'en';
+            }
+
+            if (settings.payments) {
+                document.getElementById('cashKHRDetails').value = settings.payments.cashKHRDetails || '';
+                document.getElementById('cashUSDDetails').value = settings.payments.cashUSDDetails || '';
+                document.getElementById('khqrId').value = settings.payments.khqrId || '';
+                document.getElementById('abaName').value = settings.payments.abaName || '';
+                document.getElementById('abaAccount').value = settings.payments.abaAccount || '';
+                document.getElementById('acledaName').value = settings.payments.acledaName || '';
+                document.getElementById('acledaAccount').value = settings.payments.acledaAccount || '';
+            }
+
+            if (settings.currencies) {
+                const currencyItems = document.querySelectorAll('.currency-item');
+                currencyItems.forEach(item => {
+                    const code = item.querySelector('.currency-code').textContent;
+                    if (settings.currencies.enabled && settings.currencies.enabled.includes(code)) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+
+            if (settings.advanced) {
+                document.getElementById('numberingStyle').value = settings.advanced.numberingStyle || 'simple';
+                document.getElementById('timezone').value = settings.advanced.timezone || 'UTC';
+                document.getElementById('decimalPlaces').value = settings.advanced.decimalPlaces || '2';
+                document.getElementById('dateFormat').value = settings.advanced.dateFormat || 'MM/DD/YYYY';
+                document.getElementById('enableReminders').value = settings.advanced.enableReminders || 'yes';
+                document.getElementById('defaultWarranty').value = settings.advanced.defaultWarranty || '24';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            document.getElementById('alerts').appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+
+            // Also show success message
+            if (type === 'success') {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'success-message';
+                msgDiv.textContent = message;
+                document.body.appendChild(msgDiv);
+                setTimeout(() => msgDiv.remove(), 3000);
+            }
+        }
+
+        // Color picker sync
+        document.getElementById('primaryColor')?.addEventListener('change', function(e) {
+            document.getElementById('primaryColorText').value = e.target.value;
+        });
+        document.getElementById('primaryColorText')?.addEventListener('change', function(e) {
+            document.getElementById('primaryColor').value = e.target.value;
+        });
+
+        document.getElementById('secondaryColor')?.addEventListener('change', function(e) {
+            document.getElementById('secondaryColorText').value = e.target.value;
+        });
+        document.getElementById('secondaryColorText')?.addEventListener('change', function(e) {
+            document.getElementById('secondaryColor').value = e.target.value;
+        });
+
+        document.getElementById('accentColor')?.addEventListener('change', function(e) {
+            document.getElementById('accentColorText').value = e.target.value;
+        });
+        document.getElementById('accentColorText')?.addEventListener('change', function(e) {
+            document.getElementById('accentColor').value = e.target.value;
+        });
+
+        // Open Template Preview
+        function openTemplatePreview() {
+            window.open('TEMPLATE_PREVIEW.html', 'templatePreview', 'width=1400, height=900');
+        }
+    </script>
+</body>
+</html>

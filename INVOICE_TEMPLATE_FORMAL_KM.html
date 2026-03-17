@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្របង្ហាញលម្អិត</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Noto Sans Khmer', serif; color: #1a1a1a; line-height: 1.6; }
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px;
+            background: white;
+        }
+        .header {
+            border-top: 5px solid #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .company-info h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            letter-spacing: 1px;
+        }
+        .company-info p { font-size: 12px; color: #555; margin: 2px 0; }
+        .invoice-title {
+            text-align: right;
+            padding-top: 20px;
+        }
+        .invoice-title h2 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        .invoice-number { font-size: 13px; color: #666; }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .detail-block h3 { font-size: 11px; color: #2c3e50; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; }
+        .detail-block p { font-size: 13px; margin: 3px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+            font-size: 13px;
+        }
+        table thead {
+            background: #f5f5f5;
+            border-top: 2px solid #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+        }
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        table tbody tr:last-child td { border-bottom: 2px solid #2c3e50; }
+        .amount-right { text-align: right; }
+        .totals {
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-bottom: 40px;
+            font-size: 13px;
+        }
+        .totals-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .totals-row.total-final {
+            border-top: 2px solid #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding: 15px 0;
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        .notes {
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 3px solid #2c3e50;
+            margin: 40px 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid #ddd;
+            font-size: 11px;
+            color: #999;
+        }
+        @media print {
+            body { margin: 0; padding: 0; }
+            .invoice-container { padding: 0; margin: 0; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <div class="company-info">
+                <h1>{{ company_name }}</h1>
+                <p>{{ company_address }}</p>
+                <p>{{ company_city }}, {{ company_state }} {{ company_postal }}</p>
+                <p>{{ company_country }}</p>
+                <p>ទូរស័ព្ទ៖ {{ company_phone }}</p>
+                <p>អ៊ីមែល៖ {{ company_email }}</p>
+                <p>លេខលេខកូដពន្ធ៖ {{ company_tax_id }}</p>
+            </div>
+            <div class="invoice-title">
+                <h2>វិក័យប័ត្រ</h2>
+                <p class="invoice-number">លេខវិក័យប័ត្រ៖ {{ invoice_number }}</p>
+                <p class="invoice-number">កាលបរិច្ឆេទ៖ {{ invoice_date }}</p>
+                <p class="invoice-number">កាលបរិច្ឆេទលើកមក៖ {{ due_date }}</p>
+            </div>
+        </div>
+
+        <div class="invoice-details">
+            <div class="detail-block">
+                <h3>វិក័យប័ត្របង្ហាញលម្អិតដល់៖</h3>
+                <p>{{ customer_name }}</p>
+                <p>{{ customer_address }}</p>
+                <p>{{ customer_city }}, {{ customer_state }}</p>
+                <p>ទូរស័ព្ទ៖ {{ customer_phone }}</p>
+                <p>អ៊ីមែល៖ {{ customer_email }}</p>
+            </div>
+            <div class="detail-block">
+                <h3>លក្ខខណ្ឌផ្នែកចំណាយ</h3>
+                <p>{{ payment_terms }}</p>
+                <h3 style="margin-top: 15px;">វិធីសាស្រ្តនៃការបង់ប្រាក់</h3>
+                <p>{{ payment_method }}</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ការពិពណ៌នា</th>
+                    <th class="amount-right">បរិមាណ</th>
+                    <th class="amount-right">តម្លៃឯកតា</th>
+                    <th class="amount-right">ចំនួនទឹកប្រាក់</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="amount-right">{{ item.quantity }}</td>
+                    <td class="amount-right">{{ item.price | currency }}</td>
+                    <td class="amount-right">{{ item.total | currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div class="totals-row">
+                <span>សរុបមូលដ្ឋាន៖</span>
+                <span>{{ subtotal | currency }}</span>
+            </div>
+            <div class="totals-row">
+                <span>ពន្ធ ({{ tax_rate }}%)៖</span>
+                <span>{{ tax | currency }}</span>
+            </div>
+            <div class="totals-row total-final">
+                <span>សរុបសេរីף៖</span>
+                <span>{{ total | currency }}</span>
+            </div>
+        </div>
+
+        {% if notes %}
+        <div class="notes">
+            <strong>ចំណាំ៖</strong><br>
+            {{ notes }}
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>សូមស្វាគមន៍មក កម្មពិច។ សូមបង់ប្រាក់ដោយយោងទៅលក្ខខណ្ឌដែលបានរៀបរាប់ខាងលើ។</p>
+            <p>&copy; {{ company_name }}. រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Startup Receipt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: #0f0f0f; }
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(180deg, #fafafa, #fff);
+        }
+        .receipt-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
+            padding: 30px;
+        }
+        .header {
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+        }
+        .receipt-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 12px;
+            font-size: 11px;
+        }
+        .meta-label { color: #999; }
+        .meta-value { color: #000; font-weight: 600; }
+        .items {
+            margin: 20px 0;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
+        .item-price { text-align: right; font-weight: 600; }
+        .item-row.total {
+            border-top: 2px solid #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+            padding: 12px 0;
+            font-weight: 700;
+            font-size: 13px;
+            color: #00d4ff;
+        }
+        .details {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+        .details-line {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 4px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e5e5;
+        }
+        @media print {
+            body { background: white; }
+            .receipt-container { background: white; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-card">
+            <div class="header">
+                <div class="company-name">{{ company_name }}</div>
+                <div class="receipt-meta">
+                    <div>
+                        <div class="meta-label">Receipt</div>
+                        <div class="meta-value">#{{ invoice_number }}</div>
+                    </div>
+                    <div>
+                        <div class="meta-label">Date</div>
+                        <div class="meta-value">{{ invoice_date }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size: 12px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+                <strong>{{ customer_name }}</strong><br>
+                <span style="color: #999; font-size: 11px;">{{ payment_method }}</span>
+            </div>
+
+            <div class="items">
+                {% for item in items %}
+                <div class="item-row">
+                    <div>{{ item.description }}</div>
+                    <div class="item-price">{{ item.total | currency }}</div>
+                </div>
+                {% endfor %}
+
+                <div class="item-row total">
+                    <span>Total</span>
+                    <span>{{ total | currency }}</span>
+                </div>
+            </div>
+
+            <div class="details">
+                <div class="details-line">
+                    <span>Subtotal</span>
+                    <span>{{ subtotal | currency }}</span>
+                </div>
+                <div class="details-line">
+                    <span>Tax ({{ tax_rate }}%)</span>
+                    <span>{{ tax | currency }}</span>
+                </div>
+            </div>
+
+            <div class="footer">
+                Thank you for your business!<br>
+                {{ company_name }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

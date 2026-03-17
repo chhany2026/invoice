@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Invoice</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; }
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .invoice-card {
+            background: white;
+            border-radius: 15px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+            align-items: start;
+        }
+        .company-info h1 {
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-weight: 900;
+        }
+        .company-info p { font-size: 13px; color: #666; margin: 5px 0; }
+        .invoice-title { text-align: right; }
+        .invoice-title h2 {
+            font-size: 28px;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+        .invoice-number { font-size: 12px; color: #999; }
+        .badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+        .detail-block h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .detail-block p { font-size: 13px; margin: 4px 0; color: #555; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+        }
+        table thead {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-top: 2px solid #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        table tbody tr:hover { background: #f8f9ff; }
+        .amount-right { text-align: right; }
+        .totals {
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-bottom: 40px;
+        }
+        .totals-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .totals-row.total-final {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #667eea;
+        }
+        .notes {
+            padding: 20px;
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            margin: 40px 0;
+            font-size: 12px;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            font-size: 11px;
+            color: #999;
+        }
+        @media print {
+            .invoice-container { background: white; padding: 0; }
+            .invoice-card { box-shadow: none; border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-card">
+            <div class="header">
+                <div class="company-info">
+                    <h1>{{ company_name }}</h1>
+                    <p>{{ company_address }}</p>
+                    <p>{{ company_city }}, {{ company_state }} {{ company_postal }}</p>
+                    <p>📞 {{ company_phone }}</p>
+                    <p>📧 {{ company_email }}</p>
+                </div>
+                <div class="invoice-title">
+                    <h2>INVOICE</h2>
+                    <p class="invoice-number">Invoice #{{ invoice_number }}</p>
+                    <p class="invoice-number">{{ invoice_date }}</p>
+                    <div class="badges">
+                        <span class="badge">DUE: {{ due_date }}</span>
+                        <span class="badge">{{ currency }} {{ total | currency }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice-details">
+                <div class="detail-block">
+                    <h3>👤 Billed To</h3>
+                    <p><strong>{{ customer_name }}</strong></p>
+                    <p>{{ customer_address }}</p>
+                    <p>{{ customer_city }}, {{ customer_state }}</p>
+                    <p>{{ customer_phone }}</p>
+                    <p>{{ customer_email }}</p>
+                </div>
+                <div class="detail-block">
+                    <h3>💳 Payment Details</h3>
+                    <p><strong>Terms:</strong> {{ payment_terms }}</p>
+                    <p><strong>Method:</strong> {{ payment_method }}</p>
+                    <p style="margin-top: 15px;"><strong>Company Tax ID:</strong><br>{{ company_tax_id }}</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="amount-right">Qty</th>
+                        <th class="amount-right">Unit Price</th>
+                        <th class="amount-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td class="amount-right">{{ item.quantity }}</td>
+                        <td class="amount-right">{{ item.price | currency }}</td>
+                        <td class="amount-right">{{ item.total | currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <div class="totals-row">
+                    <span>Subtotal</span>
+                    <span>{{ subtotal | currency }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>Tax ({{ tax_rate }}%)</span>
+                    <span>{{ tax | currency }}</span>
+                </div>
+                <div class="totals-row total-final">
+                    <span>TOTAL</span>
+                    <span>{{ total | currency }}</span>
+                </div>
+            </div>
+
+            {% if notes %}
+            <div class="notes">
+                <strong>📝 Notes:</strong><br>
+                {{ notes }}
+            </div>
+            {% endif %}
+
+            <div class="footer">
+                <p>Thank you for your business! 🎨 Created by {{ company_name }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

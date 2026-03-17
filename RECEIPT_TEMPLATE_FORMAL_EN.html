@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Receipt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; color: #1a1a1a; }
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        .receipt-content {
+            text-align: center;
+            padding: 30px;
+            border: 2px solid #2c3e50;
+        }
+        .header {
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .company-details {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .receipt-number {
+            font-size: 12px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .divider {
+            border-top: 1px dashed #2c3e50;
+            margin: 15px 0;
+        }
+        .items {
+            text-align: left;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #ddd;
+        }
+        .item-desc { text-align: left; }
+        .item-price { text-align: right; font-weight: bold; }
+        .item-row.total {
+            border-top: 2px solid #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding: 8px 0;
+            font-weight: bold;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #2c3e50;
+        }
+        @media print {
+            body { margin: 0; padding: 0; }
+            .receipt-container { margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-content">
+            <div class="header">
+                <div class="company-name">{{ company_name }}</div>
+                <div class="company-details">
+                    {{ company_address }}<br>
+                    {{ company_phone }} | {{ company_email }}
+                </div>
+            </div>
+
+            <div class="receipt-number">
+                Receipt #{{ invoice_number }}
+            </div>
+            <div style="font-size: 11px; color: #666;">
+                {{ invoice_date }}
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="items">
+                {% for item in items %}
+                <div class="item-row">
+                    <div class="item-desc">{{ item.description }}</div>
+                    <div class="item-price">{{ item.total | currency }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="item-row total">
+                <span>SUBTOTAL</span>
+                <span>{{ subtotal | currency }}</span>
+            </div>
+
+            <div style="font-size: 11px; padding: 8px 0; border-bottom: 1px dotted #ddd;">
+                Tax ({{ tax_rate }}%): {{ tax | currency }}
+            </div>
+
+            <div class="item-row total" style="margin-top: 10px;">
+                <span>TOTAL</span>
+                <span>{{ total | currency }}</span>
+            </div>
+
+            <div style="font-size: 11px; color: #666; margin-top: 15px;">
+                Payment Method: {{ payment_method }}
+            </div>
+
+            <div class="footer">
+                <p>Thank you for your receipt.</p>
+                <p>&copy; {{ company_name }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

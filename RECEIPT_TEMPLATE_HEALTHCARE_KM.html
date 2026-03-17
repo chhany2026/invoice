@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ឯកសារលម្អិតផ្នែកសុខាភិបាល</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Noto Sans Khmer', sans-serif; color: #2c3e50; background: #f8f9fa; }
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .receipt-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .company-badge {
+            font-size: 10px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 20px;
+        }
+        .receipt-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .meta-label { color: #10b981; font-weight: 600; }
+        .meta-value { color: #555; }
+        .items {
+            margin: 20px 0;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px dotted #e5e5e5;
+            font-size: 12px;
+        }
+        .item-price { text-align: right; font-weight: 600; }
+        .item-row.total {
+            border-top: 2px solid #10b981;
+            border-bottom: 2px solid #10b981;
+            padding: 10px 0;
+            font-weight: 700;
+            font-size: 13px;
+            color: #10b981;
+        }
+        .totals {
+            background: #f0f9f7;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+        .totals-line {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 4px 0;
+        }
+        .notice {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 10px;
+            color: #92400e;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            padding-top: 15px;
+            border-top: 1px solid #e5e5e5;
+        }
+        @media print {
+            .receipt-container { background: white; padding: 0; }
+            .receipt-card { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-card">
+            <div class="header">
+                <div class="company-name">{{ company_name }} 🏥</div>
+                <div class="company-badge">ឯកសារលម្អិតផ្នែកសុខាភិបាល</div>
+            </div>
+
+            <div class="content">
+                <div class="receipt-meta">
+                    <div>
+                        <div class="meta-label">ឯកសារលម្អិត #</div>
+                        <div class="meta-value">{{ invoice_number }}</div>
+                    </div>
+                    <div>
+                        <div class="meta-label">កាលបរិច្ឆេទ</div>
+                        <div class="meta-value">{{ invoice_date }}</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 12px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e5e5;">
+                    <strong>អតិថិជន៖</strong> {{ customer_name }}<br>
+                    <span style="color: #999; font-size: 11px;">វិធីសាស្រ្ត៖ {{ payment_method }}</span>
+                </div>
+
+                <div class="items">
+                    {% for item in items %}
+                    <div class="item-row">
+                        <div>{{ item.description }}</div>
+                        <div class="item-price">{{ item.total | currency }}</div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="item-row total">
+                        <span>ចំនួនលើកមក</span>
+                        <span>{{ total | currency }}</span>
+                    </div>
+                </div>
+
+                <div class="totals">
+                    <div class="totals-line">
+                        <span>សរុបមូលដ្ឋាន៖</span>
+                        <span>{{ subtotal | currency }}</span>
+                    </div>
+                    <div class="totals-line">
+                        <span>ពន្ធ ({{ tax_rate }}%)៖</span>
+                        <span>{{ tax | currency }}</span>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    <strong>⚠️ ព័ត៌មានលម្អិតសំខាន់៖</strong> សូមរក្សាឯកសារលម្អិតលម្អិតនេះសម្រាប់គោលបំណងពន្ធលម្អិត។ ឯកសារលម្អិតលម្អិតនេះពឹងផ្អែកលើផ្នែកសុខាភិបាល។
+                </div>
+
+                <div class="footer">
+                    សូមស្វាគមន៍មក!<br>
+                    {{ company_email }}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

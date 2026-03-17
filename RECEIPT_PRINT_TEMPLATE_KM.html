@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្របង្រួម</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Khmer OS', 'Khmer OS Siemreap', 'Khmer OS Muol', 'Khmer OS Battambang', 'Khmer OS Content', 'Courier New', monospace;
+            background: white;
+            color: #333;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+
+        /* Thermal receipt style (58mm or 80mm) */
+        .receipt {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #333;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-logo {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .receipt-header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+            letter-spacing: 1px;
+        }
+
+        .receipt-header p {
+            font-size: 11px;
+            color: #666;
+            margin: 2px 0;
+            line-height: 1.4;
+        }
+
+        .receipt-divider {
+            border-bottom: 1px dashed #333;
+            margin: 10px 0;
+        }
+
+        .receipt-section-title {
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 10px 0 8px 0;
+            color: #333;
+        }
+
+        .receipt-item {
+            font-size: 11px;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .receipt-item-desc {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+        }
+
+        .receipt-item-qty {
+            font-size: 10px;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        /* Right-aligned amounts */
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin: 5px 0;
+        }
+
+        .amount-label {
+            flex: 1;
+        }
+
+        .amount-value {
+            text-align: right;
+            min-width: 60px;
+            font-weight: bold;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+        }
+
+        .total-label {
+            flex: 1;
+        }
+
+        .total-value {
+            text-align: right;
+            min-width: 60px;
+        }
+
+        .payment-info {
+            font-size: 10px;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .payment-method-label {
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin: 15px 0 10px 0;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .qr-code img {
+            max-width: 120px;
+            max-height: 120px;
+        }
+
+        .qr-label {
+            font-size: 9px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .warranty-section {
+            background: #f0f8e0;
+            padding: 8px;
+            border-radius: 3px;
+            margin: 10px 0;
+            font-size: 10px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .warranty-section h4 {
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 3px;
+            color: #2e7d32;
+        }
+
+        .warranty-section p {
+            margin: 2px 0;
+            color: #2e7d32;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .thank-you {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 15px 0;
+            letter-spacing: 1px;
+        }
+
+        .no-print {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .print-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .print-button:hover {
+            background: #5568d3;
+        }
+
+        .receipt-number {
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .datetime {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin: 8px 0;
+        }
+
+        .customer-name {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 8px 0 3px 0;
+        }
+
+        .customer-contact {
+            font-size: 10px;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        .payment-status {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            padding: 5px;
+            margin: 8px 0;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 500px) {
+            .receipt-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .receipt {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button class="print-button" onclick="window.print()">🖨️ បោះពុម្ព</button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="receipt">
+            <!-- Header -->
+            <div class="receipt-header">
+                <div class="receipt-logo">🧾</div>
+                <h1>{{ company_name }}</h1>
+                {% if company_address %}<p>{{ company_address }}</p>{% endif %}
+                {% if company_city %}<p>{{ company_city }}</p>{% endif %}
+                {% if company_phone %}<p>☎ {{ company_phone }}</p>{% endif %}
+                {% if company_email %}<p>📧 {{ company_email }}</p>{% endif %}
+            </div>
+
+            <!-- Receipt Number & Date -->
+            <div class="receipt-number">
+                វិក័យប័ត្របង្រួម #{{ receipt_number }}
+            </div>
+            <div class="datetime">
+                {{ receipt_date }}<br>{{ receipt_time }}
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <!-- Customer Information -->
+            {% if customer_name %}
+                <div class="customer-name">{{ customer_name }}</div>
+                {% if customer_email %}<div class="customer-contact">{{ customer_email }}</div>{% endif %}
+                {% if customer_phone %}<div class="customer-contact">{{ customer_phone }}</div>{% endif %}
+            {% endif %}
+
+            <div class="receipt-divider"></div>
+
+            <!-- Items Section -->
+            <div class="receipt-section-title">ទំនិញ</div>
+            {% for item in items %}
+                <div class="receipt-item">
+                    <div class="receipt-item-desc">
+                        <span>{{ item.description }}</span>
+                        <span>{{ currency }} {{ "%.2f"|format(item.line_total) }}</span>
+                    </div>
+                    <div class="receipt-item-qty">
+                        {{ item.quantity }}x @ {{ currency }} {{ "%.2f"|format(item.unit_price) }}
+                    </div>
+                    {% if item.serial_number %}
+                        <div class="receipt-item-qty" style="color: #999;">
+                            សៀលលេខ: {{ item.serial_number }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="receipt-divider"></div>
+
+            <!-- Totals -->
+            <div class="amount-row">
+                <span class="amount-label">សរុបមូលដ្ឋាន៖</span>
+                <span class="amount-value">{{ currency }} {{ "%.2f"|format(subtotal) }}</span>
+            </div>
+
+            {% if tax_amount %}
+                <div class="amount-row">
+                    <span class="amount-label">ពន្ធ៖</span>
+                    <span class="amount-value">{{ currency }} {{ "%.2f"|format(tax_amount) }}</span>
+                </div>
+            {% endif %}
+
+            {% if discount_amount %}
+                <div class="amount-row">
+                    <span class="amount-label">ប្រឹក្សាយោគ្យ៖</span>
+                    <span class="amount-value">-{{ currency }} {{ "%.2f"|format(discount_amount) }}</span>
+                </div>
+            {% endif %}
+
+            {% if shipping_cost %}
+                <div class="amount-row">
+                    <span class="amount-label">ដឹកជញ្ជូន៖</span>
+                    <span class="amount-value">{{ currency }} {{ "%.2f"|format(shipping_cost) }}</span>
+                </div>
+            {% endif %}
+
+            <div class="total-row">
+                <span class="total-label">សរុបសាលរ</span>
+                <span class="total-value">{{ currency }} {{ "%.2f"|format(grand_total) }}</span>
+            </div>
+
+            <!-- Payment Information -->
+            {% if payment_method %}
+                <div class="receipt-section-title">របៀបបង់ប្រាក់</div>
+                <div class="payment-info">
+                    <div class="payment-method-label">{{ payment_method|upper }}</div>
+                    {% if transaction_reference %}
+                        <div>ឯកសារយោង: {{ transaction_reference }}</div>
+                    {% endif %}
+                    {% if cash_currency %}
+                        <div>រូបិយប័ណ្ណ: {{ cash_currency }}</div>
+                    {% endif %}
+                </div>
+                {% if payment_status %}
+                    <div class="payment-status">{{ payment_status|upper }}</div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Warranty Section -->
+            {% if warranty_items %}
+                <div class="warranty-section">
+                    <h4>✅ ព័ត៌មាននៃលក្ខណៈលម្អិត</h4>
+                    {% for item in warranty_items %}
+                        <p>{{ item.product }}<br>
+                        រយៈពេល៖ {{ item.warranty_duration }} ខែ<br>
+                        ពិតក្នុង៖ {{ item.warranty_end_date }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- QR Code (if available) -->
+            {% if qr_code %}
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+                    <div class="qr-label">ស្កេនក្នុងព័ត៌មាននៃលក្ខណៈលម្អិត</div>
+                </div>
+            {% endif %}
+
+            <!-- KHQR Code (if available for payment) -->
+            {% if khqr_code %}
+                <div style="text-align: center; margin: 10px 0;">
+                    <div style="font-size: 10px; font-weight: bold; margin-bottom: 5px;">KHQR បង់ប្រាក់</div>
+                    <img src="data:image/png;base64,{{ khqr_code }}" alt="KHQR Code" style="max-width: 120px; max-height: 120px;">
+                </div>
+            {% endif %}
+
+            <!-- Footer -->
+            <div class="thank-you">សូមរំរឹង!</div>
+            
+            {% if footer_text %}
+                <div class="footer-text">
+                    {{ footer_text }}
+                </div>
+            {% endif %}
+
+            <div class="footer-text">
+                <p style="margin-top: 10px;">
+                    សូមចូលមកវិញឡើងវិញ!<br>
+                    មានសំណួរ? ចូលទាក់ទងយើងរៀងរាល់ពេល
+                </p>
+                <p style="margin-top: 8px; font-size: 8px; color: #999;">
+                    បង្កើតលើ៖ {{ generation_date }}<br>
+                    លេខវិក័យប័ត្រ #{{ invoice_number }}
+                </p>
+            </div>
+
+            <!-- Dashed line at end (like thermal printer) -->
+            <div style="border-bottom: 2px dashed #333; margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print after page loads (optional, can be disabled)
+        // window.addEventListener('load', function() {
+        //     window.print();
+        // });
+    </script>
+</body>
+</html>

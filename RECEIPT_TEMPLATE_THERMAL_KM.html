@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្របង្រួមកម្តៅ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Khmer OS', 'Khmer OS Siemreap', 'Khmer OS Muol', 'Khmer OS Battambang', 'Khmer OS Content', 'Courier New', monospace;
+            background: white;
+            color: #000;
+            line-height: 1.2;
+            font-size: 11px;
+            width: 80mm;
+            margin: 0 auto;
+            padding: 5mm;
+        }
+
+        @media print {
+            body {
+                width: 80mm;
+                margin: 0;
+                padding: 2mm;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .receipt {
+            max-width: 76mm;
+            background: white;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .company-name {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .company-info {
+            font-size: 9px;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            text-align: center;
+            margin: 6px 0 4px 0;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            font-size: 9px;
+        }
+
+        .info-label {
+            font-weight: normal;
+        }
+
+        .info-value {
+            font-weight: bold;
+        }
+
+        .item-row {
+            margin-bottom: 3px;
+            font-size: 9px;
+        }
+
+        .item-desc {
+            margin-bottom: 1px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1px;
+        }
+
+        .item-qty-price {
+            font-size: 8px;
+            color: #666;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+            font-size: 9px;
+        }
+
+        .total-row.final {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 2px 0;
+            margin: 4px 0;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .payment-info {
+            font-size: 9px;
+            margin: 4px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 8px;
+            border-top: 1px dashed #000;
+            padding-top: 4px;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 6px 0;
+        }
+
+        .qr-code {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 2px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .print-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            font-size: 9px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .print-button:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🏢</div>
+            <div class="company-name">{{ company_name or 'ឈ្មោះក្រុមហ៊ុន' }}</div>
+            <div class="company-info">
+                {{ company_address or 'អាសយដ្ឋានក្រុមហ៊ុន' }}<br>
+                {{ company_phone or '+855-23-456-789' }}<br>
+                {{ company_email or 'info@company.com' }}
+            </div>
+        </div>
+
+        <!-- Receipt Info -->
+        <div class="section-title">វិក័យប័ត្របង្រួម</div>
+        <div class="info-row">
+            <span class="info-label">លេខវិក័យប័ត្របង្រួម:</span>
+            <span class="info-value">{{ receipt_number or 'វិក័យប័ត្របង្រួម-២០២៤-០០០១' }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">កាលបរិច្ឆេទ:</span>
+            <span class="info-value">{{ receipt_date or '០១/០១/២០២៤' }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">លេខវិក័យប័ត្រ:</span>
+            <span class="info-value">{{ invoice_number or 'វិក័យប័ត្រ-២០២៤-០០០១' }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Customer Info -->
+        <div class="info-row">
+            <span class="info-label">អតិថិជន:</span>
+            <span class="info-value">{{ customer_name or 'ឈ្មោះអតិថិជន' }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">ទូរស័ព្ទ:</span>
+            <span class="info-value">{{ customer_phone or '+855-12-345-678' }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Items -->
+        {% for item in line_items %}
+        <div class="item-row">
+            <div class="item-desc">{{ item.description or 'ឈ្មោះផលិតផល' }}</div>
+            {% if item.serial_number %}
+            <div class="item-qty-price">លេខស៉ែរៀល: {{ item.serial_number }}</div>
+            {% endif %}
+            <div class="item-details">
+                <span class="item-qty-price">បរិមាណ: {{ item.quantity or 1 }}</span>
+                <span>{{ currency or '៛' }}{{ "%.0f"|format(item.line_total or 0) }}</span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="divider"></div>
+
+        <!-- Totals -->
+        <div class="total-row">
+            <span>សរុបរង:</span>
+            <span>{{ currency or '៛' }}{{ "%.0f"|format(subtotal or 0) }}</span>
+        </div>
+        <div class="total-row">
+            <span>ពន្ធ:</span>
+            <span>{{ currency or '៛' }}{{ "%.0f"|format(tax_amount or 0) }}</span>
+        </div>
+        <div class="total-row final">
+            <span>ចំនួនបង់សរុប:</span>
+            <span>{{ currency or '៛' }}{{ "%.0f"|format(amount_paid or 0) }}</span>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="payment-info">
+            <strong>វិធីសាស្ត្របង់ប្រាក់:</strong> {{ payment_method or 'លុយសម្ភារៈ' }}<br>
+            <strong>ស្ថានភាព:</strong> {{ payment_status or 'បានបញ្ចប់' }}<br>
+            {% if transaction_id %}
+            <strong>លេខប្រតិបត្តិការ:</strong> {{ transaction_id }}
+            {% endif %}
+        </div>
+
+        <!-- QR Code -->
+        {% if qr_code %}
+        <div class="qr-section">
+            <div class="qr-code">
+                <img src="{{ qr_code }}" alt="QR" />
+            </div>
+            <div style="font-size: 7px;">ស្កេនដើម្បីទទួលវិក័យប័ត្រឌីជីថល</div>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>សូមអរគុណចំពោះការប្រើប្រាស់សេវាកម្មរបស់យើង!</div>
+            <div>{{ company_name or 'ឈ្មោះក្រុមហ៊ុន' }}</div>
+            {% if company_website %}
+            <div>{{ company_website }}</div>
+            {% endif %}
+            <button class="print-button no-print" onclick="window.print()">បោះពុម្ពវិក័យប័ត្របង្រួម</button>
+        </div>
+    </div>
+</body>
+</html></content>
+<parameter name="filePath">d:\Coding Folder\sola project\Warranty Product\RECEIPT_TEMPLATE_THERMAL_KM.html

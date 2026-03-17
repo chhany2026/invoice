@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្រ - រចនាបង្ហាញក្រុមហ៊ុន</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Khmer OS', 'Segoe UI', sans-serif; background: #f1f3f5; padding: 20px; color: #2c3e50; }
+        .container { max-width: 900px; margin: 0 auto; background: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); }
+        .header-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .company-logo-text h1 { font-size: 28px; font-weight: 300; letter-spacing: 3px; margin-bottom: 10px; }
+        .company-logo-text p { font-size: 13px; opacity: 0.9; line-height: 1.6; }
+        .invoice-meta { text-align: right; border-left: 2px solid rgba(255,255,255,0.3); padding-left: 40px; }
+        .invoice-meta .meta-item { margin-bottom: 20px; }
+        .invoice-meta .label { font-size: 11px; text-transform: uppercase; opacity: 0.8; margin-bottom: 5px; letter-spacing: 1px; }
+        .invoice-meta .value { font-size: 18px; font-weight: 600; }
+        .content-section { padding: 50px; }
+        .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .party { padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .party h3 { font-size: 11px; color: #1e3c72; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
+        .party p { font-size: 13px; margin: 5px 0; line-height: 1.6; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .items-table thead { background: #f8f9fa; border-top: 3px solid #1e3c72; border-bottom: 3px solid #1e3c72; }
+        .items-table th { padding: 15px; text-align: left; font-size: 11px; font-weight: 700; color: #1e3c72; text-transform: uppercase; letter-spacing: 1px; }
+        .items-table td { padding: 15px; font-size: 13px; border-bottom: 1px solid #e8e8e8; }
+        .items-table tbody tr:nth-child(even) { background: #f8f9fa; }
+        .text-right { text-align: right; }
+        .summary-section { display: flex; justify-content: flex-end; margin-top: 30px; padding-top: 30px; border-top: 1px solid #e8e8e8; }
+        .summary-box { width: 300px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 12px 0; font-size: 13px; border-bottom: 1px solid #e8e8e8; }
+        .summary-row.total { background: #f8f9fa; padding: 15px; font-size: 16px; font-weight: 700; color: #1e3c72; border: 2px solid #1e3c72; border-bottom: none; }
+        .payment-section { margin-top: 40px; padding: 25px; background: #f8f9fa; border-left: 4px solid #2a5298; border-radius: 4px; }
+        .payment-section h3 { font-size: 11px; color: #1e3c72; margin-bottom: 10px; font-weight: 700; letter-spacing: 1px; }
+        .payment-section p { font-size: 13px; color: #333; line-height: 1.8; }
+        .footer { text-align: center; padding: 25px; background: #2c3e50; color: white; font-size: 12px; }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="company-logo-text">
+                <h1>{{ company_name }}</h1>
+                <p>{{ company_street }}<br>{{ company_city }}, {{ company_state }}<br>{{ company_email }} | {{ company_phone }}</p>
+            </div>
+            <div class="invoice-meta">
+                <div class="meta-item">
+                    <div class="label">វិក័យប័ត្រ</div>
+                    <div class="value">{{ invoice_number }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">ថ្ងៃ</div>
+                    <div class="value">{{ invoice_date }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div class="parties">
+                <div class="party">
+                    <h3>គូបង្គាប់</h3>
+                    <p><strong>{{ customer_name }}</strong></p>
+                    <p>{{ customer_email }}</p>
+                    <p>{{ customer_phone }}</p>
+                    <p>{{ customer_city }}, {{ customer_country }}</p>
+                </div>
+                <div class="party">
+                    <h3>លម្អិតវិក័យប័ត្រ</h3>
+                    <p><strong>ថ្ងៃចេញ:</strong> {{ invoice_date }}</p>
+                    <p><strong>រូបិយប័ណ្ណ:</strong> {{ currency }}</p>
+                    <p><strong>លក្ខខណ្ឌលក់:</strong> {{ payment_terms }}</p>
+                </div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>ការពិពណ៌នាលម្អិត</th>
+                        <th class="text-right" style="width: 80px;">បរិមាណ</th>
+                        <th class="text-right" style="width: 100px;">តម្លៃឯកតា</th>
+                        <th class="text-right" style="width: 100px;">ចំនួនប្រាក់</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td class="text-right">{{ item.quantity }}</td>
+                        <td class="text-right">{{ item.price | currency }}</td>
+                        <td class="text-right">{{ item.amount | currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="summary-section">
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>ចំនួនរងយក្ស</span>
+                        <span>{{ subtotal | currency }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ពន្ធ ({{ tax_rate }}%)</span>
+                        <span>{{ tax | currency }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>ចំនួនសរុប</span>
+                        <span>{{ total | currency }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-section">
+                <h3>លក្ខខណ្ឌការទូទាត់ដើម្បីឱ្យរន្ង</h3>
+                <p>{{ invoice_terms }}</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>សូមស្វាគមន៍ក្នុងការងាររបស់យើង! វិក័យប័ត្របានឯកសារយ៉ាង​ល្អ និងហត្ថលេខា។</p>
+        </div>
+    </div>
+</body>
+</html>

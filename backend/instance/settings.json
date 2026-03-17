@@ -1,0 +1,72 @@
+{
+  "company": {
+    "name": "Solarkh",
+    "email": "solarkh@gmail.com",
+    "phone": "0888836588",
+    "website": "solarkh.com",
+    "street": "#125, vealvong chomkar mon",
+    "city": "phnom penh",
+    "state": "",
+    "postal": "12000",
+    "country": "ca",
+    "taxId": "",
+    "companyPhone": "+1-555-0100",
+    "companyWebsite": "https://testcompany.com",
+    "companyName": "Test Company",
+    "companyEmail": "contact@test.com",
+    "companyPostal": "10001",
+    "companyTaxId": "12-3456789",
+    "companyStreet": "123 Main St",
+    "companyCountry": "USA",
+    "companyCity": "New York",
+    "companyState": "NY"
+  },
+  "branding": {
+    "logo": "",
+    "primaryColor": "#667eea",
+    "secondaryColor": "#764ba2",
+    "accentColor": "#4CAF50",
+    "fontFamily": "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+  },
+  "invoice": {
+    "prefix": "INV",
+    "startNum": "1000",
+    "taxRate": "20",
+    "paymentTerms": "30",
+    "terms": "Thank you for your business! Payment is due within the specified terms.",
+    "notes": "",
+    "defaultCurrency": "USD",
+    "defaultLanguage": "en"
+  },
+  "payments": {
+    "cashKHRDetails": "Direct Cash Payment (KHR)",
+    "cashUSDDetails": "Direct Cash Payment (USD)",
+    "khqrId": "",
+    "abaName": "ABA Bank Account",
+    "abaAccount": "Not provided",
+    "acledaName": "ACLEDA Bank Account",
+    "acledaAccount": "Not provided"
+  },
+  "currencies": {
+    "enabled": [
+      "USD",
+      "KHR"
+    ],
+    "symbols": {
+      "USD": "$",
+      "EUR": "€",
+      "GBP": "£",
+      "JPY": "¥",
+      "CAD": "C$",
+      "KHR": "៛"
+    }
+  },
+  "advanced": {
+    "numberingStyle": "simple",
+    "timezone": "Asia/Bangkok",
+    "decimalPlaces": "2",
+    "dateFormat": "MM/DD/YYYY",
+    "enableReminders": "yes",
+    "defaultWarranty": "24"
+  }
+}

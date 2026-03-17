@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក័យប័ត្រ - បច្ចេកវិទ្យា</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', 'Monaco', monospace; background: #0a0e27; padding: 20px; color: #e0e0e0; }
+        .container { max-width: 900px; margin: 0 auto; background: #1a1f3a; border: 1px solid #3a3f54; border-radius: 4px; overflow: hidden; box-shadow: 0 0 30px rgba(59, 130, 246, 0.2); }
+        .tech-header { background: #0f172a; padding: 40px; border-bottom: 2px solid #3b82f6; position: relative; }
+        .header-line { display: block; font-size: 11px; color: #3b82f6; margin: 5px 0; letter-spacing: 2px; }
+        .company-name { font-size: 24px; color: #60a5fa; font-weight: bold; margin: 10px 0; text-shadow: 0 0 10px rgba(96, 165, 250, 0.3); }
+        .company-details { font-size: 12px; color: #94a3b8; margin-top: 10px; line-height: 1.6; }
+        .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; padding-top: 30px; border-top: 1px solid #3a3f54; }
+        .invoice-info { text-align: right; }
+        .info-row { margin-bottom: 15px; }
+        .info-label { font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 2px; }
+        .info-value { font-size: 14px; color: #e0e0e0; font-weight: bold; margin-top: 3px; }
+        .main-content { padding: 40px; }
+        .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; background: #1a1f3a; padding: 25px; border: 1px solid #3a3f54; border-radius: 4px; }
+        .party h3 { font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; border-bottom: 1px solid #3a3f54; padding-bottom: 10px; }
+        .party p { font-size: 12px; margin: 5px 0; color: #cbd5e1; }
+        .items-section { margin: 30px 0; }
+        .items-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .items-table thead { border-top: 2px solid #3b82f6; border-bottom: 2px solid #3b82f6; }
+        .items-table th { padding: 12px; text-align: left; color: #3b82f6; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: rgba(59, 130, 246, 0.05); }
+        .items-table td { padding: 12px; border-bottom: 1px solid #2a2f44; color: #cbd5e1; }
+        .items-table tbody tr:hover { background: rgba(59, 130, 246, 0.05); }
+        .text-right { text-align: right; }
+        .summary { display: flex; justify-content: flex-end; margin-top: 30px; }
+        .summary-box { width: 300px; border: 1px solid #3a3f54; background: rgba(59, 130, 246, 0.05); }
+        .summary-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #3a3f54; font-size: 12px; }
+        .summary-row.total { background: #3b82f6; color: white; font-weight: bold; border: 2px solid #3b82f6; border-bottom: none; padding: 15px; }
+        .notes-section { margin-top: 30px; padding: 25px; background: rgba(59, 130, 246, 0.05); border: 1px solid #3a3f54; border-left: 3px solid #3b82f6; }
+        .notes-title { font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .notes-text { font-size: 12px; color: #cbd5e1; line-height: 1.6; }
+        .footer { text-align: center; padding: 20px; background: #0f172a; border-top: 2px solid #3b82f6; font-size: 11px; color: #94a3b8; }
+        @media print { body { background: white; color: black; } .container { background: white; border-color: #ccc; box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tech-header">
+            <span class="header-line">▼ ប្រព័ន្ធវិក័យប័ត្រ v2.0 ▼</span>
+            <div class="company-name">{{ company_name }}</div>
+            <div class="company-details">
+                {{ company_street }} | {{ company_city }}, {{ company_state }}<br>
+                📧 {{ company_email }} | 📱 {{ company_phone }}
+            </div>
+            
+            <div class="header-grid">
+                <div></div>
+                <div class="invoice-info">
+                    <div class="info-row">
+                        <div class="info-label">លេខវិក័យប័ត្រ</div>
+                        <div class="info-value">{{ invoice_number }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">ថ្ងៃ</div>
+                        <div class="info-value">{{ invoice_date }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="parties">
+                <div class="party">
+                    <h3>» គូបង្គាប់</h3>
+                    <p><strong>{{ customer_name }}</strong></p>
+                    <p>{{ customer_email }}</p>
+                    <p>{{ customer_phone }}</p>
+                    <p>{{ customer_city }}, {{ customer_country }}</p>
+                </div>
+                <div class="party">
+                    <h3>» លម្អិតវិក័យប័ត្រ</h3>
+                    <p><strong>ថ្ងៃ:</strong> {{ invoice_date }}</p>
+                    <p><strong>រូបិយប័ណ្ណ:</strong> {{ currency }}</p>
+                    <p><strong>លក្ខខណ្ឌ:</strong> {{ payment_terms }}</p>
+                </div>
+            </div>
+            
+            <div class="items-section">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>ការពិពណ៌នាលម្អិត</th>
+                            <th class="text-right" style="width: 70px;">បរិមាណ</th>
+                            <th class="text-right" style="width: 100px;">តម្លៃឯកតា</th>
+                            <th class="text-right" style="width: 100px;">សរុប</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.description }}</td>
+                            <td class="text-right">{{ item.quantity }}</td>
+                            <td class="text-right">{{ item.price | currency }}</td>
+                            <td class="text-right">{{ item.amount | currency }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>ចំនួនរងយក្ស</span>
+                        <span>{{ subtotal | currency }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ពន្ធ ({{ tax_rate }}%)</span>
+                        <span>{{ tax | currency }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>ចំនួនសរុប</span>
+                        <span>{{ total | currency }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notes-section">
+                <div class="notes-title">» លក្ខខណ្ឌ អាកប្បកិរិយា</div>
+                <div class="notes-text">{{ invoice_terms }}</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            សូមស្វាគមន៍ក្នុងការងាររបស់យើង! ការទូទាត់ត្រូវបានធ្វើឡើងដូច​ដែលបានលើកឡើង។
+        </div>
+    </div>
+</body>
+</html>

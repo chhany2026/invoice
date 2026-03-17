@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Gradient Modern Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #0f172a;
+            padding: 20px;
+            color: #1e293b;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            color: white;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .company-branding h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        
+        .company-branding p {
+            font-size: 13px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+        
+        .invoice-details {
+            text-align: right;
+        }
+        
+        .detail-item {
+            margin-bottom: 20px;
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.85;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .main-content {
+            padding: 50px;
+        }
+        
+        .parties-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .party-box {
+            border-radius: 8px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .party-box h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6366f1;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .party-box p {
+            font-size: 13px;
+            margin: 6px 0;
+            line-height: 1.6;
+            color: #475569;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+        }
+        
+        .items-table thead {
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        .items-table th {
+            padding: 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .items-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+        
+        .items-table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 40px;
+        }
+        
+        .totals-box {
+            width: 320px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .total-row.grand {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 18px 16px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .notes-box {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(226, 232, 240, 0.5) 0%, rgba(241, 245, 250, 0.8) 100%);
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .notes-box h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6366f1;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .notes-box p {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.8;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 25px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gradient-header">
+            <div class="header-content">
+                <div class="company-branding">
+                    <h1>{{ company_name }}</h1>
+                    <p>{{ company_street }}<br>{{ company_city }}, {{ company_state }}<br>📧 {{ company_email }}<br>📱 {{ company_phone }}</p>
+                </div>
+                <div class="invoice-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Invoice #</div>
+                        <div class="detail-value">{{ invoice_number }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value">{{ invoice_date }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="parties-grid">
+                <div class="party-box">
+                    <h3>📍 Bill To</h3>
+                    <p><strong>{{ customer_name }}</strong></p>
+                    <p>{{ customer_email }}</p>
+                    <p>{{ customer_phone }}</p>
+                    <p>{{ customer_city }}, {{ customer_country }}</p>
+                </div>
+                <div class="party-box">
+                    <h3>ℹ️ Details</h3>
+                    <p><strong>Issue Date:</strong> {{ invoice_date }}</p>
+                    <p><strong>Currency:</strong> {{ currency }}</p>
+                    <p><strong>Payment Terms:</strong> {{ payment_terms }}</p>
+                </div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-right" style="width: 80px;">Qty</th>
+                        <th class="text-right" style="width: 100px;">Unit Price</th>
+                        <th class="text-right" style="width: 100px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td class="text-right">{{ item.quantity }}</td>
+                        <td class="text-right">{{ item.price | currency }}</td>
+                        <td class="text-right">{{ item.amount | currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="totals-section">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>{{ subtotal | currency }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax ({{ tax_rate }}%)</span>
+                        <span>{{ tax | currency }}</span>
+                    </div>
+                    <div class="total-row grand">
+                        <span>TOTAL</span>
+                        <span>{{ total | currency }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notes-box">
+                <h3>📝 Terms & Conditions</h3>
+                <p>{{ invoice_terms }}</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for your business! Payment is due as per terms mentioned above.</p>
+        </div>
+    </div>
+</body>
+</html>
